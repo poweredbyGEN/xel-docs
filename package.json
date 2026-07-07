@@ -1,0 +1,19 @@
+{
+  "name": "xel-docs",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "update:whitepaper": "node scripts/update-whitepaper.mjs",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/starlight": "^0.37.7",
+    "@iconify-json/lucide": "^1.2.96",
+    "astro": "^5.6.1",
+    "sharp": "^0.34.2"
+  }
+}

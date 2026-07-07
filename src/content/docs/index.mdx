@@ -1,0 +1,52 @@
+---
+title: XEL Docs Overview
+description: Start here for protocol documentation for XEL Living Characters, sovereign onchain identities with owned funding, memory, runtime, and provenance.
+hero:
+  tagline: Build, mint, fund, and run Living Characters with XEL's open protocol. These docs cover the protocol boundary, Sui contracts, wallets, storage, providers, runtime, and security gates.
+  actions:
+    - text: Start with Architecture
+      link: /architecture-boundaries/
+      icon: right-arrow
+      variant: primary
+    - text: Minting Inputs
+      link: /minting-and-runtime-inputs/
+      icon: external
+      variant: secondary
+    - text: Smart Contracts
+      link: /smart-contracts/
+      icon: seti:config
+      variant: minimal
+---
+
+import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+
+## What is XEL?
+
+XEL is an open protocol for Living Characters: onchain identities that can be owned, funded, spoken to, preserved, and migrated over time. GEN can publish into XEL and provide services around it, but XEL owns the protocol boundary, public docs, schemas, contracts, and package identity.
+
+<CardGrid>
+  <LinkCard title="Architecture Boundaries" href="/architecture-boundaries/" description="Understand what belongs to the open protocol, on-chain contracts, XEL.xyz, third-party providers, and GEN-provided services." />
+  <LinkCard title="Minting and Runtime Inputs" href="/minting-and-runtime-inputs/" description="See the inputs a wallet, app, or provider should gather before minting and running a Living Character." />
+  <LinkCard title="Memory, Inference, and Storage" href="/memory-inference-storage/" description="Persona artifacts, encrypted memory, provider calls, public refs, and runtime resolution." />
+  <LinkCard title="Security and Acceptance" href="/security-and-acceptance/" description="Invariant coverage, security posture, acceptance criteria, and launch gates." />
+</CardGrid>
+
+## Public Reading Order
+
+1. [Workstreams](/workstreams/)
+2. [Architecture Boundaries](/architecture-boundaries/)
+3. [Open Source Scope](/open-source-scope/)
+4. [Minting and Runtime Inputs](/minting-and-runtime-inputs/)
+5. [Smart Contracts](/smart-contracts/)
+6. [Wallet Auth and XEL Product Shell](/wallet-auth-and-xel-product/)
+7. [Memory, Inference, and Storage](/memory-inference-storage/)
+8. [Payments, Treasury, and Provider Discovery](/payments-treasury-provider-discovery/)
+9. [Security and Acceptance Gates](/security-and-acceptance/)
+
+## Provider Notes
+
+<CardGrid>
+  <Card title="Inference">XEL treats inference providers as swappable runtime capabilities, not protocol owners.</Card>
+  <Card title="Storage">Public media and proofs are content-addressed. Private persona and memory refs stay encrypted and access-controlled.</Card>
+  <Card title="Funding">Funding wallets, treasury policy, x402 rails, and provider receipts are modeled as protocol-compatible capabilities.</Card>
+</CardGrid>
