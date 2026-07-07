@@ -1,0 +1,7 @@
+# XEL protocol documentation
+# https://docs.xel.xyz
+
+User-agent: *
+Allow: /
+
+Sitemap: https://docs.xel.xyz/sitemap-index.xml
