@@ -42,6 +42,22 @@ export default defineConfig({
 						content: 'Build, mint, fund, and run Living Characters with XEL.',
 					},
 				},
+				{
+					tag: 'link',
+					attrs: { rel: 'alternate', type: 'text/plain', href: '/llms.txt', title: 'LLM-readable XEL docs' },
+				},
+				{
+					tag: 'link',
+					attrs: { rel: 'alternate', type: 'text/plain', href: '/llms-full.txt', title: 'Full LLM-readable XEL docs' },
+				},
+				{
+					tag: 'link',
+					attrs: { rel: 'alternate', type: 'application/yaml', href: '/openapi.yaml', title: 'XEL API OpenAPI spec' },
+				},
+				{
+					tag: 'meta',
+					attrs: { name: 'ai-content-declaration', content: 'This site provides XEL protocol and API documentation for AI agents. See /llms.txt for machine-readable reference.' },
+				},
 			],
 			customCss: ['./src/styles/custom.css'],
 			components: {
@@ -58,38 +74,42 @@ export default defineConfig({
 					label: 'Start Here',
 					collapsed: false,
 					items: [
-						{ label: 'Overview', slug: '' },
+						{ label: 'The Idea', slug: '' },
+						{ label: 'FAQ', slug: 'faq' },
 						{ label: 'Whitepaper', slug: 'whitepaper' },
-						{ label: 'Workstreams', slug: 'workstreams' },
-						{ label: 'Architecture Boundaries', slug: 'architecture-boundaries' },
-						{ label: 'Open Source Scope', slug: 'open-source-scope' },
+						{ label: 'How It Works', slug: 'how-it-works' },
+						{ label: 'Endowments and Creator Earnings', slug: 'endowments-and-creator-earnings' },
+						{ label: 'If XEL Disappears', slug: 'if-xel-disappears' },
 					],
 				},
 				{
-					label: 'Protocol',
+					label: 'Build and Verify',
 					collapsed: false,
 					items: [
+						{ label: 'Concepts', slug: 'concepts' },
+						{ label: 'Building', slug: 'building' },
+						{ label: 'Architecture', slug: 'architecture' },
+						{ label: 'Reference', slug: 'reference' },
+						{ label: 'Running Infrastructure', slug: 'running-infrastructure' },
+						{ label: 'Resources', slug: 'resources' },
+					],
+				},
+				{
+					label: 'Technical Notes',
+					collapsed: true,
+					items: [
+						{ label: 'Workstreams', slug: 'workstreams' },
+						{ label: 'Architecture Boundaries', slug: 'architecture-boundaries' },
+						{ label: 'Open Source Scope', slug: 'open-source-scope' },
 						{ label: 'Minting and Runtime Inputs', slug: 'minting-and-runtime-inputs' },
 						{ label: 'Smart Contracts', slug: 'smart-contracts' },
 						{ label: 'Wallet Auth and Product Shell', slug: 'wallet-auth-and-xel-product' },
 						{ label: 'Security and Acceptance Gates', slug: 'security-and-acceptance' },
 						{ label: 'Sui Testnet Deployment', slug: 'sui-devnet-deployment' },
-					],
-				},
-				{
-					label: 'Runtime',
-					collapsed: false,
-					items: [
 						{ label: 'Memory, Inference, and Storage', slug: 'memory-inference-storage' },
 						{ label: 'Payments, Treasury, Provider Discovery', slug: 'payments-treasury-provider-discovery' },
 						{ label: 'Cost Model and Funding', slug: 'cost-model-and-funding' },
 						{ label: 'GEN Publish to XEL', slug: 'gen-publish-to-xel' },
-					],
-				},
-				{
-					label: 'Providers',
-					collapsed: false,
-					items: [
 						{ label: 'Inference Provider Strategy', slug: 'inference-provider-strategy' },
 						{ label: 'Chutes Integration', slug: 'chutes-integration' },
 						{ label: 'Verathos Integration', slug: 'verathos-integration' },

@@ -1,52 +1,75 @@
 ---
-title: XEL Docs Overview
-description: Start here for protocol documentation for XEL Living Characters, sovereign onchain identities with owned funding, memory, runtime, and provenance.
-hero:
-  tagline: Build, mint, fund, and run Living Characters with XEL's open protocol. These docs cover the protocol boundary, Sui contracts, wallets, storage, providers, runtime, and security gates.
-  actions:
-    - text: Start with Architecture
-      link: /architecture-boundaries/
-      icon: right-arrow
-      variant: primary
-    - text: Minting Inputs
-      link: /minting-and-runtime-inputs/
-      icon: external
-      variant: secondary
-    - text: Smart Contracts
-      link: /smart-contracts/
-      icon: seti:config
-      variant: minimal
+title: "The Idea"
+description: "What XEL is and why it exists."
 ---
 
-import { Card, CardGrid, LinkCard } from '@astrojs/starlight/components';
+# The Idea
 
-## What is XEL?
+What XEL is and why it exists. No background needed.
 
-XEL is an open protocol for Living Characters: onchain identities that can be owned, funded, spoken to, preserved, and migrated over time. GEN can publish into XEL and provide services around it, but XEL owns the protocol boundary, public docs, schemas, contracts, and package identity.
+## How do you make a story last 10,000 years?
 
-<CardGrid>
-  <LinkCard title="Architecture Boundaries" href="/architecture-boundaries/" description="Understand what belongs to the open protocol, on-chain contracts, XEL.xyz, third-party providers, and GEN-provided services." />
-  <LinkCard title="Minting and Runtime Inputs" href="/minting-and-runtime-inputs/" description="See the inputs a wallet, app, or provider should gather before minting and running a Living Character." />
-  <LinkCard title="Memory, Inference, and Storage" href="/memory-inference-storage/" description="Persona artifacts, encrypted memory, provider calls, public refs, and runtime resolution." />
-  <LinkCard title="Security and Acceptance" href="/security-and-acceptance/" description="Invariant coverage, security posture, acceptance criteria, and launch gates." />
-</CardGrid>
+Ten thousand years ago, someone pressed a hand to a cave wall and blew pigment around it. We still have the handprint. We do not have their name, their voice, the way they told a story, or a single thing they thought. Almost everything a person is has always been the part that does not survive them.
 
-## Public Reading Order
+We tell ourselves this is getting better. It is not, and it is getting worse in a way bigger than any one person. A handful of platforms now shape what most of the world sees. A few large models increasingly speak in the same voice, trained on the same data, nudging everyone toward the same phrasings, the same aesthetics, the same defaults. Smaller languages fade. Local ways of telling a story, particular senses of humor, the specific texture of a place or a family or a person, all of it gets sanded down to whatever travels best through the same few pipes. We are converging, fast, toward a global monoculture, not because anyone chose it, but because everything now runs through systems that reward sameness and are owned by someone who can change them at will.
 
-1. [Workstreams](/workstreams/)
-2. [Architecture Boundaries](/architecture-boundaries/)
-3. [Open Source Scope](/open-source-scope/)
-4. [Minting and Runtime Inputs](/minting-and-runtime-inputs/)
-5. [Smart Contracts](/smart-contracts/)
-6. [Wallet Auth and XEL Product Shell](/wallet-auth-and-xel-product/)
-7. [Memory, Inference, and Storage](/memory-inference-storage/)
-8. [Payments, Treasury, and Provider Discovery](/payments-treasury-provider-discovery/)
-9. [Security and Acceptance Gates](/security-and-acceptance/)
+The things most worth keeping are exactly the things this flattening erases first: the particular, the local, the personal, the strange. A grandmother's specific way of speaking. A community's own characters and myths. The character you built, the voice you would give anything to keep, the way someone you loved actually talked. All of it lives on someone else's servers, under someone else's terms, one policy change or one bankruptcy away from gone. We have never had more ways to record a life and fewer ways to keep one.
 
-## Provider Notes
+A stone tablet lasted because no one could switch it off. That is the whole secret, and we lost it. Everything digital comes with an owner who can end it.
 
-<CardGrid>
-  <Card title="Inference">XEL treats inference providers as swappable runtime capabilities, not protocol owners.</Card>
-  <Card title="Storage">Public media and proofs are content-addressed. Private persona and memory refs stay encrypted and access-controlled.</Card>
-  <Card title="Funding">Funding wallets, treasury policy, x402 rails, and provider receipts are modeled as protocol-compatible capabilities.</Card>
-</CardGrid>
+So ask the question seriously. Not "how do you back something up," but: how do you make a living thing, a voice, a personality, a presence, last longer than the company that made it, longer than the platform it lived on, longer than you? And how do you do it not once but a million times over, so the world keeps its variety instead of collapsing into a single voice?
+
+That is the question XEL answers. Not by fighting the technology, but by changing who owns it: a way for a specific voice to hold itself, fund itself, and belong to no platform, so it cannot be flattened, bought, or switched off. Every voice that can do that is one piece of human variety that survives the age of sameness.
+
+## What it takes to last
+
+The question answers itself once you ask what something would have to *be* to last. Not what features it needs. What has to be true about it, structurally, so time and companies and bad luck cannot quietly end it. There are five such truths, and XEL is built on them.
+
+**It has to belong to no one but its owner.**
+A thing survives when no one can take it. Your character is something you hold yourself, and holding it is the only authority there is. No admin account above you, no company override, no off switch anyone else can reach, not even the people who built XEL. A stone tablet lasts because no one owns the right to erase it. A XEL lasts for the same reason.
+
+**Its privacy has to be kept by math, not by promise.**
+Every company promises to protect your data, and every promise is only as durable as the company. So XEL does not rely on one. A character's memory is encrypted, and the key belongs to owning the character. Its privacy is enforced by cryptography, which does not go bankrupt, change its terms, or get acquired.
+
+**It has to pay its own way.**
+Nothing survives on someone's willingness to keep paying the bill. So a character carries its own fund, an endowment, whose returns cover its costs. Its existence does not depend on a subscription or a company's budget. (Honestly: returns vary and forever is a direction, not a guarantee. A funded character can persist indefinitely; a neglected one goes dormant but recoverable, never quietly deleted. Section 3 covers this in full.)
+
+**It cannot need any single company to exist.**
+Digital things die because they depend on one company, and companies end. A XEL depends on none. Every service it uses, its intelligence, memory, voice, storage, is a replaceable part. Pull any of them out, even the ones we run, and the character finds another and keeps going. We test this on every update by switching off everything we provide and confirming a character still lives.
+
+**It has to be honest about all of this.**
+A thing built to outlive its makers cannot rest on marketing. XEL is verifiable, not trusted: identity lives in public proofs anyone can check, and where something is still centralized today, we say so plainly and show the path off it. You never have to take our word for it.
+
+Those five are the answer to the question. The rest of the docs is how each one actually works.
+
+This is why XEL matters beyond any single character. Every voice that can hold itself, fund itself, and belong to no platform is one piece of human variety that cannot be flattened, bought, or switched off. A world with many sovereign, particular, permanent voices is a world that resists becoming one voice. Preservation here is not nostalgia. It is how a diverse culture survives an age that pushes relentlessly toward a single one.
+
+## What is XEL
+
+XEL lets you create a living character that is truly, permanently yours.
+
+A XEL is a character you can talk to. It remembers you, has a personality, and can speak in a voice and appear in images and video. That part is not new. What is new is what a XEL is made of, and who controls it.
+
+A XEL is not an account on a company's server. It is something you own, held in your own wallet, the way you own a house or a book rather than the way you rent a subscription. Its memory is private and locked with a key only you hold. Its rules can never be changed out from under you. And it carries its own fund that pays for its existence over time.
+
+One sentence: a XEL is a character with the permanence and ownership of property, instead of the impermanence and control of a subscription.
+
+## The two reasons people make one
+
+People come to XEL for two very different reasons.
+
+**To create.** An original character, a companion, a persona, a being you invent and want to keep and grow, and truly own rather than rent from a platform that could change or vanish.
+
+**To preserve.** Someone real, a voice, a personality, a presence you do not want to lose, captured with that person's consent. A grandparent's way of telling a story. A voice a family wants to keep.
+
+Underneath, both are the same object with the same properties: alive, private, self-funding, and yours to keep, transfer, or pass on.
+
+## Where to go next
+
+If you want to create or preserve a character, read How It Works, then Funding, then Building. You do not need to understand blockchains.
+
+If you just want to talk to a character someone made, read Talking to a character and paying (in How It Works). No wallet or special knowledge required.
+
+If you are a developer or want to run infrastructure, skim The Idea and How It Works for the mental model, then go to Concepts, Building, Architecture, Reference, and Running Infrastructure.
+
+---

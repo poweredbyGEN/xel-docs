@@ -1,0 +1,81 @@
+# XEL Docs for LLMs
+
+XEL is a protocol and product surface for Living Characters: owned, private, self-funding characters that can survive any single operator.
+
+Canonical URLs:
+- Docs: https://docs.xel.xyz/
+- Whitepaper: https://docs.xel.xyz/whitepaper/
+- Full LLM context: https://docs.xel.xyz/llms-full.txt
+- OpenAPI: https://docs.xel.xyz/openapi.yaml
+- Sitemap: https://docs.xel.xyz/sitemap-index.xml
+
+Recommended reading order:
+- The Idea: https://docs.xel.xyz/
+- FAQ: https://docs.xel.xyz/faq/
+- Whitepaper: https://docs.xel.xyz/whitepaper/
+- How It Works: https://docs.xel.xyz/how-it-works/
+- Endowments and Creator Earnings: https://docs.xel.xyz/endowments-and-creator-earnings/
+- If XEL Disappears: https://docs.xel.xyz/if-xel-disappears/
+- Concepts: https://docs.xel.xyz/concepts/
+- Building: https://docs.xel.xyz/building/
+- Architecture: https://docs.xel.xyz/architecture/
+- Reference: https://docs.xel.xyz/reference/
+- Running Infrastructure: https://docs.xel.xyz/running-infrastructure/
+- Resources: https://docs.xel.xyz/resources/
+
+Section summaries:
+
+## The Idea
+
+What XEL is and why it exists. No background needed.
+
+## FAQ
+
+**What is XEL?**
+XEL is a standard for creating living characters that are truly, permanently yours. A XEL is a character you can talk to that remembers, has a personality, and can speak and appear in voice, images, and video. What makes it different is what it is made of: an owned object on a blockchain, with encrypted private memory, immutable rules, and its own self-funding wallet. It is a standard, not a single app, so anyone can build clients, run the services that power characters, or verify any character directly from the chain.
+
+## Whitepaper
+
+**XEL: an open protocol for sovereign, persistent digital beings (aNFTs)**
+
+## How It Works
+
+The mechanism in plain language, no code. By the end you know what actually happens when a character exists, remembers, thinks, earns, lasts, and is passed on, and why no company can take it from you.
+
+## Endowments and Creator Earnings
+
+The money story has two halves. An endowment is how a character sustains its own existence. Creator earnings are how a person makes money from a character people value. This section covers both, and how they interlock: a loved character can fund its own survival and grow. Honest throughout, because this is a real decision with real stakes.
+
+## If XEL Disappears
+
+This is the question that proves or breaks everything: if XEL the company vanished, would your character survive? The honest, detailed answer, including the two mechanisms that make survival real, interoperability and upgradeability, and the limits worth knowing.
+
+## Concepts
+
+Every piece named precisely, with the real vocabulary, so you can go deeper and speak about the system exactly. Each concept points back to its plain explanation in How It Works and forward to its formal detail in Reference.
+
+## Building
+
+From nothing to a character you own, funded and running. Code lands with the SDK; the shapes here are stable.
+
+## Architecture
+
+The deep how, paired with the whitepaper and the build spec, which are the formal sources of truth.
+
+## Reference
+
+Look things up. Rendered from the build spec, which is the source of truth, so it never drifts.
+
+## Running Infrastructure
+
+For people who want to run the plumbing. This is where the open market lives.
+
+## Resources
+
+- FAQ: common questions for users and builders, in the next section.
+- Glossary: every term defined once.
+- Whitepaper: the vision, architecture, and full invariant list.
+- Build spec: the formal reference for on-chain types, schemas, and flows.
+- Security and disclosure: how to report an issue, the trust assumptions, and audits.
+- Changelog: versioned changes to the standard and the schemas.
+- Community and support: where to ask questions and how to contribute.

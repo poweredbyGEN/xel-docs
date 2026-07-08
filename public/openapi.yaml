@@ -1,0 +1,2910 @@
+openapi: 3.1.0
+info:
+  title: XEL API
+  version: 0.1.0
+paths:
+  /api/health:
+    get:
+      summary: Health
+      operationId: health_api_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /api/auth/email/start:
+    post:
+      summary: Email Start
+      operationId: email_start_api_auth_email_start_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailStart'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/auth/email/verify:
+    post:
+      summary: Email Verify
+      operationId: email_verify_api_auth_email_verify_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EmailVerify'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/auth/wallet/nonce:
+    post:
+      summary: Wallet Nonce
+      operationId: wallet_nonce_api_auth_wallet_nonce_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WalletStart'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/auth/wallet/verify:
+    post:
+      summary: Wallet Verify
+      operationId: wallet_verify_api_auth_wallet_verify_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WalletVerify'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/auth/agent/capabilities:
+    post:
+      summary: Issue Agent Capability
+      operationId: issue_agent_capability_api_auth_agent_capabilities_post
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentCapabilityIssueRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/agents/register:
+    post:
+      summary: Register Agent
+      description: 'Self-serve XEL agent registration.
+
+
+        Returns the raw agent key exactly once. XEL stores only sha256(agent_key),
+        then issues a
+
+        normal bearer session token so agents can start calling XEL APIs without a
+        human login.'
+      operationId: register_agent_api_agents_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentRegisterRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/auth/agent/register:
+    post:
+      summary: Register Agent Auth Alias
+      operationId: register_agent_auth_alias_api_auth_agent_register_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentRegisterRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/auth/agent:
+    post:
+      summary: Agent Login
+      operationId: agent_login_api_auth_agent_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentLogin'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/agents/rotate:
+    post:
+      summary: Rotate Agent
+      description: 'Rotate a durable XEL agent key.
+
+
+        The old key is marked revoked before the replacement key is returned. XEL
+        stores only
+
+        sha256(agent_key) for both old and new keys; the replacement key is shown
+        once.'
+      operationId: rotate_agent_api_agents_rotate_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentKeyMutationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/agents/revoke:
+    post:
+      summary: Revoke Agent
+      description: Revoke a durable XEL agent key. Subsequent /api/auth/agent calls
+        fail closed.
+      operationId: revoke_agent_api_agents_revoke_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgentKeyMutationRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/me:
+    get:
+      summary: Me
+      operationId: me_api_me_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/accounts/me/sync-onchain:
+    post:
+      summary: Sync Me Onchain
+      operationId: sync_me_onchain_api_accounts_me_sync_onchain_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/accounts/me/link-sui-wallet:
+    post:
+      summary: Link My Sui Wallet
+      operationId: link_my_sui_wallet_api_accounts_me_link_sui_wallet_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WalletVerify'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/accounts/me/characters:
+    get:
+      summary: My Characters
+      operationId: my_characters_api_accounts_me_characters_get
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/characters/{character_id}:
+    get:
+      summary: Character Detail
+      operationId: character_detail_api_characters__character_id__get
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/profiles/{handle}:
+    get:
+      summary: Public Profile
+      operationId: public_profile_api_profiles__handle__get
+      parameters:
+      - name: handle
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Handle
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/profiles/{handle}/proof:
+    get:
+      summary: Public Profile Proof
+      description: 'Public onchain audit payload for a character: the indexed contract
+
+        events (provenance timeline), Walrus storage records, deposit wallets and
+
+        identity refs. Everything here mirrors chain/Walrus state — the page built
+
+        on it exists so anyone can verify the system without trusting the API.'
+      operationId: public_profile_proof_api_profiles__handle__proof_get
+      parameters:
+      - name: handle
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Handle
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/usernames/check:
+    get:
+      summary: Username Check
+      operationId: username_check_api_usernames_check_get
+      parameters:
+      - name: imported_handle
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Imported Handle
+      - name: name
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Name
+      - name: username
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Username
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/characters/{character_id}/username:
+    patch:
+      summary: Update Character Username
+      operationId: update_character_username_api_characters__character_id__username_patch
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsernameUpdateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/characters/{character_id}/photo:
+    post:
+      summary: Update Character Photo
+      operationId: update_character_photo_api_characters__character_id__photo_post
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/characters/{character_id}/funding:
+    get:
+      summary: Character Funding
+      operationId: character_funding_api_characters__character_id__funding_get
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/providers:
+    get:
+      summary: Providers
+      operationId: providers_api_providers_get
+      parameters:
+      - name: capability
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Capability
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/providers/resolve:
+    post:
+      summary: Providers Resolve
+      operationId: providers_resolve_api_providers_resolve_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderResolveRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/upload:
+    post:
+      summary: Upload To Walrus
+      operationId: upload_to_walrus_api_upload_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/characters:
+    post:
+      summary: Create Character
+      operationId: create_character_api_characters_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CharacterCreateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/characters/{character_id}/gen/persona:
+    post:
+      summary: Build Character Gen Persona
+      operationId: build_character_gen_persona_api_characters__character_id__gen_persona_post
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenPersonaBuildRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/characters/{character_id}/social/import:
+    post:
+      summary: Import Character Social Profile
+      operationId: import_character_social_profile_api_characters__character_id__social_import_post
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CharacterSocialImportRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/characters/{character_id}/provider-policies:
+    get:
+      summary: Character Provider Policies
+      operationId: character_provider_policies_api_characters__character_id__provider_policies_get
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/characters/{character_id}/provider-policies/{capability}:
+    get:
+      summary: Character Provider Policy
+      operationId: character_provider_policy_api_characters__character_id__provider_policies__capability__get
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      - name: capability
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Capability
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      summary: Upsert Character Provider Policy
+      operationId: upsert_character_provider_policy_api_characters__character_id__provider_policies__capability__put
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      - name: capability
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Capability
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderPolicyBindingRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/characters/{character_id}/provider-secrets:
+    get:
+      summary: Character Provider Secrets
+      operationId: character_provider_secrets_api_characters__character_id__provider_secrets_get
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      summary: Upsert Character Provider Secret
+      operationId: upsert_character_provider_secret_api_characters__character_id__provider_secrets_post
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderSecretCreateRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/characters/{character_id}/provider-secrets/retrieval-intent:
+    post:
+      summary: Character Provider Secret Retrieval Intent
+      operationId: character_provider_secret_retrieval_intent_api_characters__character_id__provider_secrets_retrieval_intent_post
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProviderSecretRetrievalIntentRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/characters/{character_id}/treasury-management:
+    get:
+      summary: Character Treasury Management
+      operationId: character_treasury_management_api_characters__character_id__treasury_management_get
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/characters/{character_id}/treasury/intents:
+    post:
+      summary: Character Treasury Intent
+      operationId: character_treasury_intent_api_characters__character_id__treasury_intents_post
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TreasuryManagementIntentRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/characters/{character_id}/access-management/intents:
+    post:
+      summary: Character Access Management Intent
+      operationId: character_access_management_intent_api_characters__character_id__access_management_intents_post
+      parameters:
+      - name: character_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Character Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccessManagementIntentRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/readiness:
+    get:
+      summary: Treasury Readiness
+      operationId: treasury_readiness_api_treasury_readiness_get
+      parameters:
+      - name: character_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Character Id
+      - name: operations_limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 10
+          title: Operations Limit
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/sui/balances:
+    get:
+      summary: Sui Treasury Balances
+      operationId: sui_treasury_balances_api_treasury_sui_balances_get
+      parameters:
+      - name: source_secret_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Secret Key
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/operations:
+    get:
+      summary: Treasury Operations
+      operationId: treasury_operations_api_treasury_operations_get
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 50
+          title: Limit
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/sui/swap:
+    post:
+      summary: Sui Treasury Swap
+      operationId: sui_treasury_swap_api_treasury_sui_swap_post
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuiTreasurySwapRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/sui/sweep:
+    post:
+      summary: Sui Treasury Sweep
+      operationId: sui_treasury_sweep_api_treasury_sui_sweep_post
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuiTreasurySweepRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/solana/sweep:
+    post:
+      summary: Solana Treasury Sweep
+      operationId: solana_treasury_sweep_api_treasury_solana_sweep_post
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChainTreasurySweepRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/base/sweep:
+    post:
+      summary: Base Treasury Sweep
+      operationId: base_treasury_sweep_api_treasury_base_sweep_post
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChainTreasurySweepRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/bridge-to-sui:
+    post:
+      summary: Treasury Bridge To Sui
+      operationId: treasury_bridge_to_sui_api_treasury_bridge_to_sui_post
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BridgeToSuiRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/gas-front:
+    post:
+      summary: Treasury Gas Front
+      operationId: treasury_gas_front_api_treasury_gas_front_post
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GasFrontRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/auto-sweep:
+    post:
+      summary: Treasury Auto Sweep
+      operationId: treasury_auto_sweep_api_treasury_auto_sweep_post
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AutoSweepRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/sui/validators:
+    get:
+      summary: Sui Treasury Validators
+      operationId: sui_treasury_validators_api_treasury_sui_validators_get
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/sui/stakes:
+    get:
+      summary: Sui Treasury Stakes
+      operationId: sui_treasury_stakes_api_treasury_sui_stakes_get
+      parameters:
+      - name: source_secret_key
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Secret Key
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/sui/stablecoin-yield/readiness:
+    get:
+      summary: Sui Stablecoin Yield Readiness
+      operationId: sui_stablecoin_yield_readiness_api_treasury_sui_stablecoin_yield_readiness_get
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/sui/stablecoin-yield/plan:
+    post:
+      summary: Sui Stablecoin Yield Plan
+      operationId: sui_stablecoin_yield_plan_api_treasury_sui_stablecoin_yield_plan_post
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StablecoinYieldExecutionRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/sui/stablecoin-yield/execute:
+    post:
+      summary: Sui Stablecoin Yield Execute
+      operationId: sui_stablecoin_yield_execute_api_treasury_sui_stablecoin_yield_execute_post
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StablecoinYieldExecutionRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/sui/stake:
+    post:
+      summary: Sui Treasury Stake
+      operationId: sui_treasury_stake_api_treasury_sui_stake_post
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuiTreasuryStakeRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/sui/unstake:
+    post:
+      summary: Sui Treasury Unstake
+      operationId: sui_treasury_unstake_api_treasury_sui_unstake_post
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuiTreasuryUnstakeRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/treasury/sui/claim-yield:
+    post:
+      summary: Sui Treasury Claim Yield
+      operationId: sui_treasury_claim_yield_api_treasury_sui_claim_yield_post
+      parameters:
+      - name: x-xel-operator-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Xel-Operator-Token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SuiTreasuryClaimYieldRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/videos:
+    post:
+      summary: Create Video
+      operationId: create_video_api_videos_post
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VideoMediaIngestRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/accounts/me/profile-media:
+    put:
+      summary: Update Profile Media
+      operationId: update_profile_media_api_accounts_me_profile_media_put
+      parameters:
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProfileMediaIngestRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/feed:
+    get:
+      summary: Feed
+      operationId: feed_api_feed_get
+      parameters:
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 20
+          title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/videos/{video_id}/like:
+    post:
+      summary: Like
+      operationId: like_api_videos__video_id__like_post
+      parameters:
+      - name: video_id
+        in: path
+        required: true
+        schema:
+          type: string
+          title: Video Id
+      - name: authorization
+        in: header
+        required: false
+        schema:
+          type: string
+          title: Authorization
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    AccessManagementIntentRequest:
+      properties:
+        intent_type:
+          type: string
+          title: Intent Type
+        pass_book_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pass Book Id
+        manager_whitelist_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Manager Whitelist Id
+        reach:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Reach
+        payment:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Payment
+        pass_hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Pass Hash
+        memory_tier:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Memory Tier
+        expires_at_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Expires At Ms
+        manager_address:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Manager Address
+        edit_persona:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Edit Persona
+        set_pricing_mode:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Set Pricing Mode
+        manage_passwords:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Manage Passwords
+        post_content:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Post Content
+        adjust_reserve:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Adjust Reserve
+      type: object
+      required:
+      - intent_type
+      title: AccessManagementIntentRequest
+    AgentCapabilityIssueRequest:
+      properties:
+        handle:
+          type: string
+          title: Handle
+        expires_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Expires At
+        revoked:
+          type: boolean
+          title: Revoked
+          default: false
+      type: object
+      required:
+      - handle
+      title: AgentCapabilityIssueRequest
+    AgentKeyMutationRequest:
+      properties:
+        agent_key:
+          type: string
+          title: Agent Key
+      type: object
+      required:
+      - agent_key
+      title: AgentKeyMutationRequest
+    AgentLogin:
+      properties:
+        agent_key:
+          type: string
+          title: Agent Key
+      type: object
+      required:
+      - agent_key
+      title: AgentLogin
+    AgentRegisterRequest:
+      properties:
+        handle:
+          type: string
+          title: Handle
+        description:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Description
+        homepage:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Homepage
+        owner:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Owner
+      type: object
+      required:
+      - handle
+      title: AgentRegisterRequest
+    AutoSweepRequest:
+      properties:
+        chains:
+          items:
+            type: string
+          type: array
+          title: Chains
+          default:
+          - solana
+          - base
+        character_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Character Id
+        execute:
+          type: boolean
+          title: Execute
+          default: false
+        limit:
+          type: integer
+          title: Limit
+          default: 50
+        include_usdc:
+          type: boolean
+          title: Include Usdc
+          default: true
+        gas_front:
+          type: boolean
+          title: Gas Front
+          default: true
+      type: object
+      title: AutoSweepRequest
+    BridgeToSuiRequest:
+      properties:
+        source_chain:
+          type: string
+          title: Source Chain
+        source_secret_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Secret Key
+        character_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Character Id
+        source_tx_digest:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Tx Digest
+        source_address:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Address
+        amount:
+          anyOf:
+          - type: integer
+          - type: string
+          - type: 'null'
+          title: Amount
+        coin_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Coin Type
+        destination_sui_address:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Destination Sui Address
+        provider:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Provider
+        gas_repayment:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Gas Repayment
+        execute:
+          type: boolean
+          title: Execute
+          default: false
+      type: object
+      required:
+      - source_chain
+      title: BridgeToSuiRequest
+    ChainTreasurySweepRequest:
+      properties:
+        source_secret_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Secret Key
+        character_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Character Id
+        destination_address:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Destination Address
+        amount:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Amount
+        sweep_all:
+          type: boolean
+          title: Sweep All
+          default: true
+      type: object
+      title: ChainTreasurySweepRequest
+    CharacterCreateRequest:
+      properties:
+        name:
+          type: string
+          title: Name
+        persona_commitment:
+          type: string
+          title: Persona Commitment
+        source_commitment:
+          type: string
+          title: Source Commitment
+        profile_uri:
+          type: string
+          title: Profile Uri
+        profile_hash:
+          type: string
+          title: Profile Hash
+        manifest_uri:
+          type: string
+          title: Manifest Uri
+        manifest_hash:
+          type: string
+          title: Manifest Hash
+        imported_handle:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Imported Handle
+        username:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Username
+        social_profile_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Social Profile Url
+        social_platform:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Social Platform
+        provision_gen_provider:
+          type: boolean
+          title: Provision Gen Provider
+          default: true
+        gen_persona_force:
+          type: boolean
+          title: Gen Persona Force
+          default: false
+        gen_monitoring_enabled:
+          type: boolean
+          title: Gen Monitoring Enabled
+          default: false
+        gen_include_assets:
+          type: boolean
+          title: Gen Include Assets
+          default: false
+        gen_persona_asset_sources:
+          anyOf:
+          - items:
+              additionalProperties: true
+              type: object
+            type: array
+          - type: 'null'
+          title: Gen Persona Asset Sources
+        gen_social_max_results:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Gen Social Max Results
+        gen_social_days:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Gen Social Days
+      type: object
+      required:
+      - name
+      - persona_commitment
+      - source_commitment
+      - profile_uri
+      - profile_hash
+      - manifest_uri
+      - manifest_hash
+      title: CharacterCreateRequest
+    CharacterSocialImportRequest:
+      properties:
+        social_profile_url:
+          type: string
+          title: Social Profile Url
+        social_platform:
+          type: string
+          title: Social Platform
+          default: instagram
+        force:
+          type: boolean
+          title: Force
+          default: false
+        monitoring_enabled:
+          type: boolean
+          title: Monitoring Enabled
+          default: true
+        max_results:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Results
+        days:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Days
+        synthesize_persona:
+          type: boolean
+          title: Synthesize Persona
+          default: true
+        import_assets:
+          type: boolean
+          title: Import Assets
+          default: true
+      type: object
+      required:
+      - social_profile_url
+      title: CharacterSocialImportRequest
+    EmailStart:
+      properties:
+        email:
+          type: string
+          format: email
+          title: Email
+      type: object
+      required:
+      - email
+      title: EmailStart
+    EmailVerify:
+      properties:
+        request_id:
+          type: string
+          title: Request Id
+        code:
+          type: string
+          title: Code
+      type: object
+      required:
+      - request_id
+      - code
+      title: EmailVerify
+    GasFrontRequest:
+      properties:
+        chain_namespace:
+          type: string
+          title: Chain Namespace
+        character_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Character Id
+        destination_address:
+          type: string
+          title: Destination Address
+        gas_amount:
+          anyOf:
+          - type: integer
+          - type: string
+          - type: 'null'
+          title: Gas Amount
+        source_tx_digest:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Tx Digest
+        execute:
+          type: boolean
+          title: Execute
+          default: false
+      type: object
+      required:
+      - chain_namespace
+      - destination_address
+      title: GasFrontRequest
+    GenPersonaBuildRequest:
+      properties:
+        gen_agent_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Gen Agent Id
+        force:
+          type: boolean
+          title: Force
+          default: false
+        execute:
+          type: boolean
+          title: Execute
+          default: false
+      type: object
+      title: GenPersonaBuildRequest
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ProfileMediaIngestRequest:
+      properties:
+        avatar:
+          anyOf:
+          - $ref: '#/components/schemas/WalrusMediaRefRequest'
+          - type: 'null'
+        avatar_ref:
+          anyOf:
+          - $ref: '#/components/schemas/WalrusMediaRefRequest'
+          - type: 'null'
+        avatar_blob_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar Blob Id
+        avatar_uri:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar Uri
+        avatar_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar Url
+        avatar_digest:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Avatar Digest
+      type: object
+      title: ProfileMediaIngestRequest
+    ProviderPolicyBindingRequest:
+      properties:
+        policy:
+          additionalProperties: true
+          type: object
+          title: Policy
+        preferred_provider_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Preferred Provider Id
+      type: object
+      required:
+      - policy
+      title: ProviderPolicyBindingRequest
+    ProviderResolveRequest:
+      properties:
+        capability:
+          type: string
+          title: Capability
+        policy:
+          additionalProperties: true
+          type: object
+          title: Policy
+        preferred_provider_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Preferred Provider Id
+      type: object
+      required:
+      - capability
+      - policy
+      title: ProviderResolveRequest
+    ProviderSecretCreateRequest:
+      properties:
+        provider_id:
+          type: string
+          title: Provider Id
+        capability:
+          type: string
+          title: Capability
+        secret_kind:
+          type: string
+          enum:
+          - creator_byo_provider_key
+          - social_oauth_refresh_token
+          - persona_key
+          - memory_key
+          - creator_data_access_token
+          title: Secret Kind
+        seal_policy_ref:
+          type: string
+          title: Seal Policy Ref
+        encrypted_secret_ref:
+          type: string
+          title: Encrypted Secret Ref
+        encrypted_secret_hash:
+          type: string
+          title: Encrypted Secret Hash
+        scope:
+          additionalProperties: true
+          type: object
+          title: Scope
+          default: {}
+        status:
+          type: string
+          enum:
+          - active
+          - rotated
+          - revoked
+          - missing
+          - backup_only
+          title: Status
+          default: active
+        operational_secret_path:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Operational Secret Path
+        operational_secret_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Operational Secret Key
+      type: object
+      required:
+      - provider_id
+      - capability
+      - secret_kind
+      - seal_policy_ref
+      - encrypted_secret_ref
+      - encrypted_secret_hash
+      title: ProviderSecretCreateRequest
+    ProviderSecretRetrievalIntentRequest:
+      properties:
+        provider_id:
+          type: string
+          title: Provider Id
+        capability:
+          type: string
+          title: Capability
+        secret_kind:
+          type: string
+          enum:
+          - creator_byo_provider_key
+          - social_oauth_refresh_token
+          - persona_key
+          - memory_key
+          - creator_data_access_token
+          title: Secret Kind
+      type: object
+      required:
+      - provider_id
+      - capability
+      - secret_kind
+      title: ProviderSecretRetrievalIntentRequest
+    StablecoinYieldExecutionRequest:
+      properties:
+        character_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Character Id
+        action:
+          type: string
+          title: Action
+        venue:
+          type: string
+          title: Venue
+        amount_micros:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Amount Micros
+        stablecoin:
+          type: string
+          title: Stablecoin
+          default: USDC
+        coin_type:
+          type: string
+          title: Coin Type
+          default: 0xa1ec7fc00a6f40db9693ad1415d0c193ad3906494428cf252621037bd7117e29::usdc::USDC
+        market_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Market Ref
+        position_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Position Ref
+        source_address:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Address
+        destination_address:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Destination Address
+        policy_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Policy Ref
+        execute:
+          type: boolean
+          title: Execute
+          default: false
+      type: object
+      required:
+      - action
+      - venue
+      title: StablecoinYieldExecutionRequest
+    SuiTreasuryClaimYieldRequest:
+      properties:
+        source_secret_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Secret Key
+        staked_sui_object_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Staked Sui Object Id
+        venue:
+          type: string
+          title: Venue
+          default: sui-native-staking
+      type: object
+      title: SuiTreasuryClaimYieldRequest
+    SuiTreasuryStakeRequest:
+      properties:
+        source_secret_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Secret Key
+        amount_mist:
+          type: integer
+          title: Amount Mist
+        validator_address:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Validator Address
+        venue:
+          type: string
+          title: Venue
+          default: sui-native-staking
+      type: object
+      required:
+      - amount_mist
+      title: SuiTreasuryStakeRequest
+    SuiTreasurySwapRequest:
+      properties:
+        source_secret_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Secret Key
+        coin_in_type:
+          type: string
+          title: Coin In Type
+          default: 0xa1ec7fc00a6f40db9693ad1415d0c193ad3906494428cf252621037bd7117e29::usdc::USDC
+        coin_out_type:
+          type: string
+          title: Coin Out Type
+          default: 0x2::sui::SUI
+        amount_in:
+          type: integer
+          title: Amount In
+        max_slippage_bps:
+          type: integer
+          title: Max Slippage Bps
+          default: 100
+        venue:
+          type: string
+          title: Venue
+          default: cetus
+        execute:
+          type: boolean
+          title: Execute
+          default: true
+      type: object
+      required:
+      - amount_in
+      title: SuiTreasurySwapRequest
+    SuiTreasurySweepRequest:
+      properties:
+        source_secret_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Secret Key
+        destination_address:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Destination Address
+        coin_type:
+          type: string
+          title: Coin Type
+          default: 0x2::sui::SUI
+        amount:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Amount
+        sweep_all:
+          type: boolean
+          title: Sweep All
+          default: false
+      type: object
+      title: SuiTreasurySweepRequest
+    SuiTreasuryUnstakeRequest:
+      properties:
+        source_secret_key:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Secret Key
+        staked_sui_object_id:
+          type: string
+          title: Staked Sui Object Id
+        venue:
+          type: string
+          title: Venue
+          default: sui-native-staking
+      type: object
+      required:
+      - staked_sui_object_id
+      title: SuiTreasuryUnstakeRequest
+    TreasuryManagementIntentRequest:
+      properties:
+        intent_type:
+          type: string
+          title: Intent Type
+        policy_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Policy Id
+        endowment_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Endowment Id
+        payment_coin_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Payment Coin Id
+        coin_type:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Coin Type
+        policy_uri:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Policy Uri
+        policy_hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Policy Hash
+        auto_yield_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Auto Yield Enabled
+        yield_claim_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Yield Claim Enabled
+        swap_enabled:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Swap Enabled
+        max_slippage_bps:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Max Slippage Bps
+        min_runtime_reserve_micros:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Runtime Reserve Micros
+        min_stake_amount_micros:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Stake Amount Micros
+        min_claim_amount_micros:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Min Claim Amount Micros
+        main_treasury_wallet_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Main Treasury Wallet Ref
+        harvest_interval_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Harvest Interval Ms
+        venue_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Venue Ref
+        venue_hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Venue Hash
+        allowed:
+          anyOf:
+          - type: boolean
+          - type: 'null'
+          title: Allowed
+        protocol_yield_skim_bps:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Protocol Yield Skim Bps
+        keep_alive_buffer_bps:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Keep Alive Buffer Bps
+        storage_markup_bps:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Storage Markup Bps
+        text_compute_markup_bps:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Text Compute Markup Bps
+        media_compute_markup_bps:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Media Compute Markup Bps
+        creator_margin_share_bps:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Creator Margin Share Bps
+        endowment_margin_share_bps:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Endowment Margin Share Bps
+        protocol_margin_share_bps:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Protocol Margin Share Bps
+        source_wallet_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Wallet Ref
+        destination_wallet_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Destination Wallet Ref
+        amount_micros:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Amount Micros
+        estimated_yield_micros:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Estimated Yield Micros
+        principal_micros:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Principal Micros
+        gross_yield_micros:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Gross Yield Micros
+        keep_alive_cost_micros:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Keep Alive Cost Micros
+        storage_cost_micros:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Storage Cost Micros
+        interaction_requested_micros:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Interaction Requested Micros
+        payment_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Payment Ref
+        gross_payment_micros:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Gross Payment Micros
+        compute_floor_micros:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Compute Floor Micros
+        serving_provider:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Serving Provider
+        protocol_recipient:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Protocol Recipient
+        contribution_ref:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Contribution Ref
+        purpose:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Purpose
+        receipt_hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Receipt Hash
+        intent_hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Intent Hash
+        sweep_hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sweep Hash
+        waterfall_hash:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Waterfall Hash
+      type: object
+      required:
+      - intent_type
+      title: TreasuryManagementIntentRequest
+    UsernameUpdateRequest:
+      properties:
+        username:
+          type: string
+          title: Username
+      type: object
+      required:
+      - username
+      title: UsernameUpdateRequest
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    VideoMediaIngestRequest:
+      properties:
+        caption:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Caption
+        media_type:
+          type: string
+          title: Media Type
+          default: video
+        duration_ms:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Duration Ms
+        is_public:
+          type: boolean
+          title: Is Public
+          default: true
+        media:
+          anyOf:
+          - $ref: '#/components/schemas/WalrusMediaRefRequest'
+          - type: 'null'
+        media_ref:
+          anyOf:
+          - $ref: '#/components/schemas/WalrusMediaRefRequest'
+          - type: 'null'
+        walrus_blob_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Walrus Blob Id
+        walrus_uri:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Walrus Uri
+        walrus_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Walrus Url
+        digest:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Digest
+        thumbnail:
+          anyOf:
+          - $ref: '#/components/schemas/WalrusMediaRefRequest'
+          - type: 'null'
+        thumbnail_blob_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Thumbnail Blob Id
+        thumbnail_uri:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Thumbnail Uri
+        thumbnail_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Thumbnail Url
+        thumbnail_digest:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Thumbnail Digest
+      type: object
+      title: VideoMediaIngestRequest
+    WalletStart:
+      properties:
+        sui_address:
+          type: string
+          title: Sui Address
+      type: object
+      required:
+      - sui_address
+      title: WalletStart
+    WalletVerify:
+      properties:
+        sui_address:
+          type: string
+          title: Sui Address
+        public_key:
+          type: string
+          title: Public Key
+        signature:
+          type: string
+          title: Signature
+      type: object
+      required:
+      - sui_address
+      - public_key
+      - signature
+      title: WalletVerify
+    WalrusMediaRefRequest:
+      properties:
+        blob_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Blob Id
+        walrus_blob_id:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Walrus Blob Id
+        uri:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Uri
+        walrus_uri:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Walrus Uri
+        url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Url
+        walrus_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Walrus Url
+        digest:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Digest
+        sha256:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Sha256
+        namespace:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Namespace
+      type: object
+      title: WalrusMediaRefRequest
+servers:
+- url: https://xel.xyz
+  description: XEL production API

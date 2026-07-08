@@ -1,0 +1,54 @@
+---
+title: "Building"
+description: "Create, fund, publish, manage, and integrate a Living Character."
+---
+
+# Building
+
+From nothing to a character you own, funded and running. Code lands with the SDK; the shapes here are stable.
+
+## Before you start
+
+You need a Sui wallet, a little SUI for fees, and some stablecoin to fund the endowment. The CLI and client are all you need; deep blockchain knowledge is not assumed, and an embedded wallet is generated at signup so you are not managing seed phrases to begin.
+
+## Create your first character
+
+1. Set up: install the CLI, connect a funded wallet. 2. Prepare the persona: write one, or run source material through the ingestion pipeline (with a consent artifact if it represents a real person) and commit the resulting persona_hash. 3. Mint: one transaction creates the aNFT and its associated objects and returns the character to your wallet; you are root owner, and minting is permissionless. 4. Fund: deposit stablecoin and set the keep-alive reserve. 5. Grant an operator (optional): a revocable agent capability for hands-off running. 6. Talk to it.
+
+## Fund it to last
+
+Deposit to the endowment, set the reserve above the hard minimum, and let the heartbeat run. See Funding a Character for the full model and the sizing math.
+
+## Set who can talk to it, and what they pay
+
+Set the two dials (reach and payment), toggle the modalities you want on, and choose credits or an access pass with per-modality caps on the expensive modes. Remember the hard boundary: these are interaction settings, not decryption.
+
+## Add voice, image, and video
+
+Turn on the richer modalities and price them. Voice supports messages and real-time calls; real-time and video run against a pre-authorized hold and settle the actual metered amount. Set caps (max resolution, clip length, renders per period) to bound cost.
+
+## Set up guardians and succession
+
+Choose a threshold set you trust, register them, and test the recovery and inheritance flows on testnet before relying on them.
+
+## Build an app on a character
+
+Read a character by its object ID, gate interaction, take payment, and never touch root. Call the character's intelligence through the open capability schemas (Reference). A fan-facing app needs none of the owner's authority.
+
+## Publish the public page
+
+Point the shared app at your character's object ID; the page exists the moment the character is minted. Set the handle for display, and share the permanent ID-based link.
+
+## Manage a character as a team
+
+Use the manager whitelist to grant scoped, non-root rights (like setting pricing) to teammates, who can never withdraw, transfer, or change who the character is.
+
+## Re-home a character
+
+Migrate providers or even chains by regenerating the derived layer from the committed substrate; identity is preserved because the commitments do not change.
+
+## Handle a deletion request
+
+Honor deletion by crypto-shredding: destroy the decryption key, not the immutable record, so the plaintext becomes permanently unrecoverable. The honest limit: it cannot un-see anything exfiltrated in the clear beforehand.
+
+---

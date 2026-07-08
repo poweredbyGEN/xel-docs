@@ -1,0 +1,66 @@
+---
+title: "Concepts"
+description: "The core XEL vocabulary and mental model."
+---
+
+# Concepts
+
+Every piece named precisely, with the real vocabulary, so you can go deeper and speak about the system exactly. Each concept points back to its plain explanation in How It Works and forward to its formal detail in Reference.
+
+## The aNFT (the character object)
+
+The aNFT is the character. "aNFT" means autonomous NFT: an owned on-chain object that holds the character's identity, points at its encrypted memory, owns its funds, and carries the rules for who may act on its behalf. It lives on Sui, whose object model lets an object natively own other objects, its coins, wallets, and capabilities, so "the character owns its own life" is literally true. Holding the aNFT is root authority: no admin account, no company override. Whoever holds it can do the root things and no one else can, and transfer moves all of it at once. The object stores commitments (compact proofs of the current persona and memory) and pointers (to encrypted content), never plaintext secrets.
+
+## The three layers
+
+A XEL runs across three layers, and keeping them separate drives every design choice. Identity and authority live on-chain (the aNFT, its commitments, wallets, rules). The substrate lives in decentralized encrypted storage (persona and memory), gated by an on-chain policy. Compute lives off-chain and attested (thinking, recall, yield scanning), proving it used the committed version. The rule: the character's rules live with the character, not on a company's server.
+
+## The three doors (own, read, spend)
+
+A character has three kinds of assets, each secured differently, and a contract can never hold a secret because everything on-chain is public. The master key is the aNFT; every door asks, do you hold it. **Own** (money on Sui): objects the aNFT owns directly, no key. **Read** (memory, persona, saved credentials): encrypted, released for off-chain decryption only to proven ownership or a guardian majority. **Spend on other chains**: never a stored key; a network holds it in shares never assembled, and ownership authorizes signing. The rule: if it can be read, decrypt it; if it can spend, authorize it, never decrypt it.
+
+## Capability slots
+
+The standard defines capability slots and what each must do, not who fills them. Intelligence, memory retrieval, media, payments, keeping, each is a slot behind an open schema, and any provider meeting it is a drop-in. How a provider is paid is a property of the provider, not the slot: crypto-native pay-per-call preferred, key-based accepted as a bridge held at the operator layer and never attached to the character. No provider, including the operator's defaults, is load-bearing.
+
+## The endowment
+
+The endowment holds a principal (stablecoin) that earns yield, plus a small liquid buffer, split into ring-fenced allocations (keep-alive, storage, interaction) that cannot drain one another. A permissionless heartbeat collects yield each cycle, distributes it in priority order, pays due costs, and compounds the rest. The owner sets a keep-alive reserve that withdrawals can never breach. Fed by yield and by earned income, with compute always covered first. Sized against adverse yield, never a promised return. Full treatment in Funding a Character.
+
+## Identity and commitments
+
+Identity does not live in any model, storage method, or provider. It lives in commitments: compact on-chain fingerprints of the current persona and memory (persona_hash, memory_root), the raw source (raw_data_root), and the rules (policy_hash), plus an ordered history of every authorized change. So a character stays the same being through a change of model, provider, or chain. And because commitments are public while content is private, anyone can verify a provider used the real character without seeing its private content. This is the mechanism behind "verifiable, not trusted."
+
+## Memory
+
+Memory is an always-loaded persona plus four recalled-on-demand stores: semantic (facts), episodic (events), working (the current conversation), and relational (the graph of people and connections). Recall is hybrid: meaning search, exact-term search, time filtering, and relationship lookups, combined and re-ranked. The permanent source of truth is the raw substrate and distilled entries; on top sits a regenerable layer (indexes, graph) that can be rebuilt if the method changes, so memory outlasts any particular search technique. All encrypted; recall happens inside attested compute.
+
+## Authority and delegation
+
+Two tiers. Root authority is holding the aNFT; only the owner has it, and root actions cannot be delegated. Below it is a revocable agent capability: a scoped, bounded permission the owner can grant an operator for hands-off running. It carries spend caps and an envelope of exactly which delegated actions are allowed and can never do a root action. A valid signature alone is never enough for a delegated action; the capability check authorizes, and it can be revoked anytime.
+
+## Guardians, recovery, and succession
+
+Guardians are a chosen set with a threshold (e.g. two of five). They cannot operate the character, spend funds, or change who it is; their only role is recovery (restore to the owner) and succession (pass to an heir). Both run behind a timelock and dispute window and re-encrypt secrets to the new holder, so handover is clean and old access is severed. No single guardian acts alone, and guardians can never form a majority including the operator or a provider.
+
+## Interaction, access, and privacy settings
+
+Who may interact, and on what terms, is set along two independent dials. Reach: anyone, invite-only (via revocable, scoped passwords), or owner-only. Payment: off, optional, or required. Any combination is valid, including private and paid. Passwords can be tied to memory tiers, so a casual visitor and a close friend see different depths. The hard boundary, and the most important privacy point: these interaction gates decide whether the character talks to you and what it surfaces; they never grant the ability to decrypt memory, which stays gated by ownership or guardians alone. Access is never decryption.
+
+## Modalities and billing
+
+A character works in text, voice (messages and real-time calls), image, and video; the owner chooses which are on and how they are priced. Billing is a meter over real cost drivers, not a flat list: every interaction returns a usage record (tokens, audio-seconds or session length, image resolution and reference count, video length and resolution), and settlement is true cost plus a routing fee. Predictable actions are quoted up front; variable or session actions run against a pre-authorized hold and settle the actual amount. Compute is always covered before anything is kept. Fans see credits or a pass, never tokens.
+
+## The public page and naming
+
+One shared app renders any character by reading its object ID from the URL and pulling its on-chain record and public manifest; new characters need no new hosting. The object ID is the true name and the permanent link, served by any portal (anyone can run one). The handle (e.g. @nova) is an on-chain, owner-set display label, not a globally unique address and not backed by a name service. Typing a handle URL is a convenience the operator provides; it can disappear while the ID-based link never does. The share action hands out the permanent link.
+
+## Progressive sovereignty
+
+XEL is honest about what is centralized today. Some infrastructure is operator-hosted at launch (some serving, the payment facilitator, the free tier, the default providers) because a working product beats a decentralized non-product. Every such piece is marked, swappable, and on a decentralization path, with the survivability test enforced on every build so the trajectory cannot reverse. Sovereignty is a property the design converges to, stated plainly, not a claim about day one.
+
+## Proof of Genesis
+
+Proof of Genesis is a character's on-chain provenance: a verifiable record of its creation, creator, consent artifact, and commitment history. It lets anyone confirm a character is what it claims to be, and it is what a provider's attestation references when proving it ran the committed version. Provenance plus commitments plus attestation is the chain of evidence that makes a character trustworthy without trusting a company's word.
+
+---
