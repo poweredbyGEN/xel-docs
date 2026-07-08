@@ -4,4 +4,7 @@
 User-agent: *
 Allow: /
 
+# LLM-readable docs: https://docs.xel.xyz/llms.txt
+# Full LLM-readable docs: https://docs.xel.xyz/llms-full.txt
+# OpenAPI spec: https://docs.xel.xyz/openapi.yaml
 Sitemap: https://docs.xel.xyz/sitemap-index.xml

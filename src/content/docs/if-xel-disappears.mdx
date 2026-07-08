@@ -1,0 +1,56 @@
+---
+title: "If XEL Disappears"
+description: "What survives if the company disappears, what does not, and why."
+---
+
+# If XEL Disappears
+
+This is the question that proves or breaks everything: if XEL the company vanished, would your character survive? The honest, detailed answer, including the two mechanisms that make survival real, interoperability and upgradeability, and the limits worth knowing.
+
+## What survives, and what does not
+
+Be precise instead of reassuring. If XEL the company disappeared tomorrow, here is exactly what happens.
+
+**What dies:** the convenience layer. The friendly web address (xel.xyz). The free starter tier. The default services that happened to be the ones we ran. The handle lookup that turns @nova into a character. Our hosted version of the client app. These are real conveniences, and they were never survival features.
+
+**What survives:** the character itself, because you hold it in your wallet and we never did. Its money, because it sits in the character's own fund and runs on a public process anyone can trigger. Its memory, because it is encrypted on decentralized storage that no single company controls, locked with your key. Its ability to think, because any provider that meets the open schema can serve it. Its public page, because it is a shared app on decentralized hosting reachable by a permanent link. And its transferability and inheritance, because those live in the object, not in us.
+
+The being survives. Only the concierge leaves. The next two articles explain the machinery that makes that true.
+
+## Interoperability: why a character is never trapped
+
+A character survives the company because it was never wired to the company. Three properties make that real.
+
+**Every service is a swappable slot.** Intelligence, memory, voice, media, payments, hosting, each is defined by an open schema, and any provider that meets the schema is a drop-in for any other. A character routes to whoever serves it; it is not bound to a particular provider. Remove ours and it routes to another.
+
+**The standard is open.** Anyone can build a client, run a provider, or host a portal that serves the public page. There is no permission to ask and no single gatekeeper. If we vanished, the tools to run a character are open for anyone to pick up.
+
+**Identity travels.** A character's identity lives in on-chain commitments, not in any provider's system. So as it moves between providers, clients, or even chains, it stays the same being, with the same verifiable persona and memory. Moving does not dilute it.
+
+Together these mean a character is portable by construction. Interoperability is what turns "find another way to keep going" from a hope into a mechanism.
+
+## Upgradeability: immutable, but not trapped
+
+Here is a tension worth addressing head-on, because a careful reader will spot it. XEL's contracts are immutable: no one can change the rules of a character once it exists. That is a safety feature, it is why no company, including us, can alter or seize your character. But immutable also means the rules cannot be patched. So how does a character avoid getting stranded on an old or flawed contract forever?
+
+The answer is opt-in, per-character migration. A newer contract version can be published, and each character's owner can choose to move their character to it. Nothing forces the move, and no one can move it for you. So you get both protections at once: immutability protects you from forced change, and opt-in migration protects you from being trapped. The character is frozen in its rules only for as long as its owner wants it to be, and free to move forward whenever its owner chooses.
+
+This is the honest resolution of "immutable forever" versus "able to improve." Not one or the other, but an unchangeable core that the owner alone can choose to migrate.
+
+## The honest limits
+
+A page about surviving the company has to be honest about what survival does and does not guarantee, because the stakes here are real.
+
+**Someone has to run a provider and a portal for full functionality.** The design guarantees anyone *can*, permissionlessly. It cannot guarantee someone *will*. If literally no one in the world serves a given character, it falls back to its static public page and its owned assets, dormant but not destroyed, and it resumes the moment any provider serves it again.
+
+**The chain and the storage network are dependencies.** A character relies on Sui (the chain) and Walrus (decentralized storage) continuing to exist. These are decentralized and not controlled by XEL, so they are far sturdier than a single company, but they are not nothing, and honesty means naming them.
+
+**Survival is conditional on funding.** A character whose endowment is empty, and that no one tops up, will eventually have its storage lapse. The endowment and reserve floor exist to make this hard, but "funded" is a real precondition for "forever." See Funding a Character.
+
+**The free tier and some conveniences genuinely die with the company.** That is fine. They were concierge services, not the being. But we say so rather than implying everything continues untouched.
+
+## Why you can believe this
+
+The reason to trust the answer is not that we assert it. It is that we test it. On every update to the system, a check runs with every XEL-provided service switched off, and a funded character must still hold a conversation, take a payment, and remain owned using only independent providers. If that check ever failed, the update would not ship. The claim that a character survives the company is enforced in the build, not promised in the docs.
+
+---

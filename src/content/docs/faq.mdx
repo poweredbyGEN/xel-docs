@@ -1,0 +1,139 @@
+---
+title: "FAQ"
+description: "Common questions about XEL ownership, permanence, funding, building, privacy, and providers."
+---
+
+# FAQ
+Common questions about XEL, grouped by what you are trying to understand. If you want the formal detail behind any answer, follow the links into Concepts, Architecture, and Reference.
+
+## The basics
+
+**What is XEL?**
+XEL is a standard for creating living characters that are truly, permanently yours. A XEL is a character you can talk to that remembers, has a personality, and can speak and appear in voice, images, and video. What makes it different is what it is made of: an owned object on a blockchain, with encrypted private memory, immutable rules, and its own self-funding wallet. It is a standard, not a single app, so anyone can build clients, run the services that power characters, or verify any character directly from the chain.
+
+**What is an aNFT?**
+Autonomous NFT. It is the character object itself: an owned on-chain object that holds the character's identity, points at its encrypted memory, owns its funds, and carries the rules for who may act on its behalf. Holding the aNFT is root authority over the character. See Concepts: The aNFT.
+
+**Is XEL a company, a product, or a protocol?**
+A standard, with a company (Limitless Labs) that started it and runs some default infrastructure at launch. The distinction matters: the company is one participant, not the landlord. Characters do not depend on it to keep existing.
+
+**What can I build with XEL?**
+A preserved person (with consent), an original character, a branded persona, a fan-facing app around a character, or a service that fills a provider slot (intelligence, memory, media, payments, keeping). See What you can build.
+
+## Ownership and control
+
+**What does "truly yours" actually mean?**
+You hold the aNFT in your own wallet, and holding it is the only root authority. There is no admin key on the operator side. No one, including the people who built XEL, can seize, edit, freeze, or delete your character. The contracts are immutable, so the rules cannot be changed under you.
+
+**What happens if XEL (the company) shuts down?**
+Your character keeps working. This is the central design property, not a hope. Every service behind a character is a swappable slot, the character funds its own existence, its data lives on decentralized storage, and its public page is a shared app that reads from the chain. A build test runs with every operator-hosted provider removed, and a funded character must still complete a turn, take a payment, and remain ownable. What you lose if the operator disappears is convenience (the friendly domain, the free tier, the default providers), not the character.
+
+**Can XEL read my character's private memory?**
+No. Memory is encrypted and stored off-chain, and decryption is released only to whoever proves they hold the aNFT, or to a guardian majority. Decryption happens in your client, not on a server. Even when a provider runs inference or retrieval, it does so inside attested compute and sees plaintext only transiently, proving it ran the committed version. See Concepts: The three doors.
+
+**Can I sell or give away my character?**
+Yes. Transfer the aNFT and everything moves with it: the funds (owned by the object), the ability to decrypt memory (gated by ownership, with keys rotated on transfer), and control of any wallets (authorized by ownership). Nothing is left behind for the previous owner.
+
+**Can I pass it on when I die?**
+Yes. You name guardians (an M-of-N set) who can run a recovery and succession flow to an heir, behind a timelock and a dispute window, with key rotation on handover. Inheritance is a designed-in feature, not an afterthought. See Concepts: Guardians, recovery, and succession.
+
+## Permanence and funding
+
+**How does a character "live forever"?**
+Each character has an endowment, its own wallet holding a principal that earns yield. A permissionless heartbeat harvests that yield each cycle and pays the character's running costs. Funded well, a character covers its own keep-alive from yield and never touches principal, so it can persist without anyone paying a bill.
+
+**Is "forever" guaranteed?**
+No, and we are careful not to claim it is. Yield is not guaranteed; it can be low or zero for stretches. What the design guarantees is honest behavior under scarcity: a character is self-sustaining when funded or popular, goes dormant-but-recoverable when neither, and is only truly lost if its substrate goes unfunded long enough to be dropped. "Forever" is a property the design converges to when funded, not an unconditional promise. See Guides: Fund a character to last.
+
+**How much does it cost to keep a character alive?**
+For a quiet character living on yield alone, the recurring burn is dominated by encrypted storage plus the heartbeat's small costs, on the order of low tens of dollars a year. As a rough, deliberately conservative example: covering about $20/year of burn from yield at 4% net needs an endowment around $500. At zero yield, that same $500 still funds many years of drawdown. Any real paid interaction makes the principal grow rather than shrink. These are illustrative numbers; all inputs vary.
+
+**What is the protocol fee?**
+A disclosed fee targeting around 10 percent, taken as a routing fee on interaction and discretionary storage plus a fee on yield. Keep-alive is charged at cost and never marked up, and principal is never touched. The fee is fully avoidable by self-routing to your own providers.
+
+**Does XEL have a token? Do I need it?**
+A character's survival never depends on a token. Everything in the operating path is denominated in stablecoins. A token exists only for commons-funding and governance concerns, entirely outside the path that keeps a character alive.
+
+## Building and integrating
+
+**Do I need to understand crypto to use XEL?**
+To use a character, no. You get a wallet and a lightweight account with no seed phrases to memorize, and fans can pay by card through an optional on-ramp. To build on XEL, you need the basics of interacting with Sui, but the ownership and key handling are designed to stay out of your way.
+
+**What chain is XEL on?**
+Sui is the default home chain, chosen for its object model (an object can natively own its funds, wallets, and capabilities) and its integrated privacy stack (encrypted storage, threshold encryption with on-chain access policy, attested compute). The chain is owner-changeable through the adapter design, and characters can receive on other chains. See Architecture: Why Sui.
+
+**How do I create a character?**
+Prepare a persona (write one, or run source material through the ingestion pipeline with consent), then mint the aNFT in one transaction, which also creates the endowment and associated objects and returns the character to your wallet. Fund the endowment, optionally grant an operator, and interact. See Getting Started: Quickstart.
+
+**How do I call a character's intelligence from my app?**
+Through open capability schemas. Inference is `inference.v1`, memory retrieval is `retrieval.v1`, media is `voice.v1`, `image.v1`, and `video.v1`, and so on. Each carries the character's identity and the relevant commitment, and each response that touches inference carries an attestation the contract verifies. See Reference: Capability schemas.
+
+**Is there an SDK?**
+The capability schemas and Move interfaces are the stable, canonical surface today. A higher-level client SDK is in progress. Guides currently show stable request/response shapes and mark SDK-specific glue as forthcoming rather than inventing an interface that would change.
+
+**Can I run a character myself, without XEL's servers?**
+Yes. That is the point of the standard. You can self-host the client, point at any providers that meet the schemas (including your own), and run against a self-hosted portal. A self-custody owner running their own client keeps the entire flow local.
+
+## Interaction and modalities
+
+**What can a character do beyond text?**
+Text conversation, voice (both discrete voice messages and real-time calls), image generation, and video generation. The owner chooses which modes are on and how they are priced, since the richer modes carry real, variable cost. See Concepts: Modalities and billing.
+
+**How is interaction priced?**
+Billing is a meter over the real cost drivers, not a flat price list. Every interaction returns a usage record (tokens, audio-seconds, resolution, video-seconds, and so on), and settlement is the sum at true cost plus a routing fee. Predictable actions are quoted up front; variable or session-based actions (real-time voice, video) run against a pre-authorized hold and settle the actual total. Fans see credits, never tokens.
+
+**Who controls who can talk to a character?**
+The owner, through two independent settings: reach (anyone, invite-only, or owner-only) and payment (off, optional, or required). Both are checked at the serving layer. Passwords can be scoped to different memory tiers. Interaction gates never grant decryption or management authority; those are separate. See Concepts: Interaction and access.
+
+**Is there a free tier?**
+Yes, a limited one. XEL as operator sponsors limited text conversation and the initial mint. Voice, image, and video are always paid. The free tier is an operator-provided convenience, not a protocol guarantee, and a character does not depend on it: without it, minting is self-paid and interaction runs on paid or endowment-funded paths.
+
+## Trust and security
+
+**How do I know a provider actually used my character's real persona and memory?**
+Because identity lives in on-chain commitments, and providers prove they ran the committed version through attestation. A verifier can check a provider's claim against the on-chain commitment. You do not trust the provider; you verify it. See Concepts: Identity and commitments.
+
+**Where are the private keys stored?**
+For funds on Sui, there is no key: the aNFT owns the funds directly and the contract is the authority. For wallets on other chains, the key is held by an MPC network in shares that are never assembled anywhere, and holding the aNFT authorizes signing. The encrypted blob holds only readable secrets (the memory key and any credentials the creator chose to give the character), never a wallet's spending key. See Concepts: The three doors.
+
+**Can a bug in the contract leak my secrets?**
+A contract never holds a plaintext secret, so it has nothing to leak. The worst a contract flaw could do is mis-authorize an action, which is bounded and auditable, not spill a key or a memory. This is a deliberate property: the secret is never in the contract's blast radius.
+
+**What are the honest trust assumptions?**
+Attested compute currently roots its attestation in hardware (enclave vendors), which is a hardware trust assumption, and the roadmap is multiple attestation vendors and eventually zero-knowledge proofs of execution. Provider-reported costs are bound to attestation and capped by the owner, but the meter is not fully trustless. Serving a public page goes through a portal, which is a mild dependency since anyone can run one. These are stated plainly in Architecture: The trust model, rather than hidden.
+
+## Providers and infrastructure
+
+**How do I become a provider?**
+Implement a capability schema behind a payment endpoint and meet its requirements. Any provider that meets a slot's schema is a drop-in for any other, and routing to you earns the payment. The preferred path is crypto-native, pay-per-call. See Providers: Become a provider.
+
+**How do providers get paid?**
+Per call, in stablecoin, at settlement. Compute is covered first out of a paid interaction, before anything nets to the endowment, which is what makes no volume of usage able to put a character underwater. Providers that only accept an API key are supported as a bridge, with the credential held at the operator layer and never attached to the character.
+
+**Can I run the keeper?**
+Yes. The heartbeat is authority-free, so anyone can send it and claim the fixed bounty. It can take nothing but that bounty, so running it carries no trust. The launch keeper is a third-party network, and the slot stays permissionless and competitive. See Providers: Run a keeper.
+
+**Can I run a portal?**
+Yes. Portals serve the public page app to browsers, and anyone can host one. No character depends on any particular portal; the object ID and on-chain data resolve regardless. See Providers: Run a portal.
+
+## Preservation and rights
+
+**Can I preserve a real person?**
+Yes, with consent. Creating a character from a real person's voice and personality requires a consent artifact recorded at creation. Many people use XEL to keep a presence they do not want to lose. A character is a representation of a person, not the person, and it carries a disclosed fidelity signal and prefers deferral over confabulation when it lacks grounding.
+
+**What about deletion and the right to be forgotten?**
+Immutability and deletion are reconciled through crypto-shredding: personal data is encrypted, and honoring a deletion request means destroying the decryption key, not the immutable record. The plaintext becomes permanently unrecoverable. The honest limit is that this assumes no prior plaintext was exfiltrated. See Guides: Handle deletion requests.
+
+**Who owns the rights to a character and its output?**
+The owner holds the character. A first-class rights and licensing layer (provisionally called Lineage) is a future direction, not part of the current version, and is intentionally left open so the immutable core does not foreclose it. See the whitepaper for the current framing.
+
+## Getting help
+
+**Where do I report a security issue?**
+See Resources: Security and disclosure.
+
+**Where do I ask questions or contribute?**
+See Resources: Community and support.
+
+**Where is the formal specification?**
+The whitepaper covers the vision, architecture, and invariants. The build spec is the formal reference for on-chain types, capability schemas, and flows. Both are linked in Resources.
