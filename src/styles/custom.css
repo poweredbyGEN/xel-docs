@@ -5,6 +5,7 @@
   --sl-font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
   --sl-nav-height: 1.25rem;
   --sl-sidebar-width: 16rem;
+  --xel-sidebar-rail: 0.95rem;
 
   --xel-bg: #121212;
   --xel-card: #1c1c1c;
@@ -21,6 +22,12 @@
   --sl-color-accent-low: #3a2038;
   --sl-color-accent: var(--xel-pink);
   --sl-color-accent-high: #ffd2fb;
+}
+
+@media (min-width: 90rem) {
+  :root {
+    --sl-sidebar-width: 28.5rem;
+  }
 }
 
 :root[data-theme="dark"] {
@@ -131,6 +138,13 @@ starlight-theme-select {
 
   .main-pane > .content-panel {
     padding-inline: clamp(1.25rem, 4vw, 3rem);
+  }
+}
+
+@media (min-width: 90rem) {
+  .page {
+    padding-inline: 5rem !important;
+    column-gap: 6.4rem !important;
   }
 }
 
@@ -318,6 +332,7 @@ nav.sidebar-pane {
   display: inline-flex;
   align-items: center;
   margin: 0.35rem 0 3.2rem;
+  padding-inline: var(--xel-sidebar-rail);
   text-decoration: none;
 }
 
@@ -337,6 +352,12 @@ nav.sidebar-pane {
   background: var(--sl-color-black) !important;
 }
 
+.sidebar-content > sl-sidebar-state-persist,
+.sidebar-content .top-level {
+  display: block !important;
+  width: 100% !important;
+}
+
 .sidebar-content ul,
 .sidebar-content ul ul,
 .sidebar-content li > ul,
@@ -348,11 +369,27 @@ nav.sidebar li {
   border-inline: 0 !important;
 }
 
+.sidebar-content .top-level,
+.sidebar-content .top-level ul {
+  padding-inline: 0 !important;
+}
+
+.sidebar-content .top-level li,
+.sidebar-content .top-level ul li {
+  margin-inline-start: 0 !important;
+  padding-inline-start: 0 !important;
+}
+
 .sidebar-content a {
   border-radius: 0.5rem;
   color: var(--sl-color-gray-3);
   padding-block: 0.48rem !important;
-  padding-inline: 0.82rem !important;
+  padding-inline: var(--xel-sidebar-rail) !important;
+}
+
+.sidebar-content summary {
+  padding-block: 0.2rem !important;
+  padding-inline: var(--xel-sidebar-rail) !important;
 }
 
 .sidebar-content a:hover {
