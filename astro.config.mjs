@@ -12,7 +12,7 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'XEL Docs',
-			favicon: '/favicon.svg',
+			favicon: '/favicon.svg?v=2',
 			logo: {
 				src: './src/assets/xel-logo.svg',
 				replacesTitle: true,
@@ -24,15 +24,15 @@ export default defineConfig({
 				},
 				{
 					tag: 'link',
-					attrs: { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+					attrs: { rel: 'icon', href: '/favicon.svg?v=2', type: 'image/svg+xml' },
 				},
 				{
 					tag: 'link',
-					attrs: { rel: 'icon', href: '/favicon-32.png', type: 'image/png', sizes: '32x32' },
+					attrs: { rel: 'icon', href: '/favicon-32.png?v=2', type: 'image/png', sizes: '32x32' },
 				},
 				{
 					tag: 'link',
-					attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png', sizes: '180x180' },
+					attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png?v=2', sizes: '180x180' },
 				},
 				{
 					tag: 'meta',
