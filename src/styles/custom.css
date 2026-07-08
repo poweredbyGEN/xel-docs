@@ -93,11 +93,11 @@ starlight-theme-select {
     flex-direction: row !important;
     flex-wrap: wrap !important;
     align-items: flex-start !important;
-    max-width: 1240px !important;
+    max-width: none !important;
     margin-inline: auto !important;
     padding-block-start: var(--sl-nav-height) !important;
-    padding-inline: clamp(1rem, 2vw, 1.5rem) !important;
-    column-gap: 1.75rem !important;
+    padding-inline: 2.375rem !important;
+    column-gap: 0.6rem !important;
   }
 
   .page > .header {
@@ -141,6 +141,10 @@ starlight-theme-select {
 .right-sidebar-container,
 nav.sidebar-pane {
   border: 0 !important;
+}
+
+.main-pane main > .content-panel:first-child {
+  display: none;
 }
 
 .sl-markdown-content {
@@ -306,17 +310,31 @@ nav.sidebar-pane {
 }
 
 .gen-sidebar-search {
-  margin: 0 0 1rem;
-  padding: 0.35rem 0.35rem 0;
+  margin: 0 0 2rem;
+  padding: 0;
+}
+
+.xel-sidebar-logo {
+  display: inline-flex;
+  align-items: center;
+  margin: 0.35rem 0 3.2rem;
+  text-decoration: none;
+}
+
+.xel-sidebar-logo img {
+  display: block;
+  width: auto;
+  height: 1.35rem;
 }
 
 .gen-sidebar-search button {
   width: 100% !important;
   max-width: none !important;
   margin-inline: 0 !important;
-  border-radius: 12px !important;
-  border: 1px solid var(--xel-line) !important;
-  background: rgba(255, 255, 255, 0.055) !important;
+  min-height: 2.5rem !important;
+  border-radius: 0.5rem !important;
+  border: 1px solid var(--sl-color-gray-5) !important;
+  background: var(--sl-color-black) !important;
 }
 
 .sidebar-content ul,
@@ -331,20 +349,22 @@ nav.sidebar li {
 }
 
 .sidebar-content a {
-  border-radius: 10px;
+  border-radius: 0.5rem;
   color: var(--sl-color-gray-3);
+  padding-block: 0.48rem !important;
+  padding-inline: 0.82rem !important;
 }
 
 .sidebar-content a:hover {
-  background: rgba(255, 255, 255, 0.055);
+  background: var(--sl-color-gray-7);
   color: var(--sl-color-white);
 }
 
 :root[data-theme="dark"] .sidebar-content a[aria-current="page"],
 .sidebar-content a[aria-current="page"] {
-  background: rgba(255, 110, 244, 0.12) !important;
-  color: #fff !important;
-  font-weight: 700;
+  background: var(--sl-color-gray-6) !important;
+  color: var(--sl-color-white) !important;
+  font-weight: 600;
 }
 
 .sidebar-content .group-label,
