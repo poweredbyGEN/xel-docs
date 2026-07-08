@@ -3,7 +3,7 @@
 :root {
   --sl-font: "Inter", ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --sl-font-mono: ui-monospace, "SFMono-Regular", Menlo, Monaco, Consolas, "Liberation Mono", monospace;
-  --sl-nav-height: 5.75rem;
+  --sl-nav-height: 1.25rem;
   --sl-sidebar-width: 16rem;
 
   --xel-bg: #121212;
@@ -55,7 +55,12 @@
 }
 
 body {
+  color-scheme: light;
   font-feature-settings: "liga" 1, "calt" 1;
+}
+
+starlight-theme-select {
+  display: none !important;
 }
 
 .header {
@@ -96,7 +101,7 @@ body {
   }
 
   .page > .header {
-    flex: 0 0 100% !important;
+    display: none !important;
   }
 
   .sidebar-pane {
