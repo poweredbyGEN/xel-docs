@@ -17,7 +17,7 @@ A XEL runs across three layers, and keeping them separate drives every design ch
 
 ## The three doors (own, read, spend)
 
-A character has three kinds of assets, each secured differently, and a contract can never hold a secret because everything on-chain is public. The master key is the aNFT; every door asks, do you hold it. **Own** (money on Sui): objects the aNFT owns directly, no key. **Read** (memory, persona, saved credentials): encrypted, released for off-chain decryption only to proven ownership or a guardian majority. **Spend on other chains**: never a stored key; a network holds it in shares never assembled, and ownership authorizes signing. The rule: if it can be read, decrypt it; if it can spend, authorize it, never decrypt it.
+A character has three kinds of assets, each secured differently, and a contract can never hold a secret because everything on-chain is public. The master key is the aNFT; every door asks, do you hold it. **Own** (money on Sui): objects the aNFT owns directly, no key. **Read** (memory, persona, read-class saved credentials that cannot move money): encrypted, released for off-chain decryption only to proven ownership or a guardian majority. **Spend on other chains**: the target is MPC dWallets (Ika) — never a stored key; a network holds it in shares never assembled, and ownership authorizes signing. The rule: if it can be read, decrypt it; if it can spend, authorize it, never decrypt it. Sort every secret by what a leaked copy would cost, not by whether it is secret: a revocable read-class token goes behind Seal; anything that can move value is spend-class and never does.
 
 ## Capability slots
 

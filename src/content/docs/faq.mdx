@@ -94,7 +94,7 @@ Yes, a limited one. XEL as operator sponsors limited text conversation and the i
 Because identity lives in on-chain commitments, and providers prove they ran the committed version through attestation. A verifier can check a provider's claim against the on-chain commitment. You do not trust the provider; you verify it. See Concepts: Identity and commitments.
 
 **Where are the private keys stored?**
-For funds on Sui, there is no key: the aNFT owns the funds directly and the contract is the authority. For wallets on other chains, the key is held by an MPC network in shares that are never assembled anywhere, and holding the aNFT authorizes signing. The encrypted blob holds only readable secrets (the memory key and any credentials the creator chose to give the character), never a wallet's spending key. See Concepts: The three doors.
+For funds on Sui, there is no key: the aNFT owns the funds directly and the contract is the authority. For wallets on other chains, the target is an MPC network (Ika dWallets) that holds the key in shares never assembled anywhere, and holding the aNFT authorizes signing; any launch-time permit/delegate bridge is a labeled, non-custodial interim on the way to MPC. The encrypted blob holds only readable secrets (the memory key and read-class creator credentials that cannot themselves move money), never a wallet's spending key and never a creator credential that can spend. See Concepts: The three doors.
 
 **Can a bug in the contract leak my secrets?**
 A contract never holds a plaintext secret, so it has nothing to leak. The worst a contract flaw could do is mis-authorize an action, which is bounded and auditable, not spill a key or a memory. This is a deliberate property: the secret is never in the contract's blast radius.
