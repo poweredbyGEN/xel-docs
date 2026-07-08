@@ -11,6 +11,10 @@ import SidebarSublist from '@astrojs/starlight/components/SidebarSublist.astro';
 const { sidebar } = Astro.locals.starlightRoute;
 ---
 
+<a class="xel-sidebar-logo" href="/" aria-label="XEL Docs home">
+	<img src="/logo.svg" alt="XEL" />
+</a>
+
 <div class="gen-sidebar-search">
 	<Search />
 </div>
