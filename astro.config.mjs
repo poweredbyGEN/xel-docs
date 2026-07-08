@@ -3,6 +3,9 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 const SITE_URL = process.env.SITE_URL || 'https://docs.xel.xyz';
+const SITE_DESCRIPTION =
+	'Protocol documentation for XEL Living Characters, sovereign onchain identities with funding, memory, runtime, and provenance.';
+const SOCIAL_DESCRIPTION = 'Your stories. Immortal characters. Perpetual income.';
 
 export default defineConfig({
 	site: SITE_URL,
@@ -20,11 +23,22 @@ export default defineConfig({
 					content: `try { localStorage.setItem('starlight-theme', 'light'); document.documentElement.dataset.theme = 'light'; } catch {}`,
 				},
 				{
+					tag: 'link',
+					attrs: { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+				},
+				{
+					tag: 'link',
+					attrs: { rel: 'icon', href: '/favicon-32.png', type: 'image/png', sizes: '32x32' },
+				},
+				{
+					tag: 'link',
+					attrs: { rel: 'apple-touch-icon', href: '/apple-touch-icon.png', sizes: '180x180' },
+				},
+				{
 					tag: 'meta',
 					attrs: {
 						name: 'description',
-						content:
-							'Protocol documentation for XEL Living Characters, sovereign onchain identities with funding, memory, runtime, and provenance.',
+						content: SITE_DESCRIPTION,
 					},
 				},
 				{
@@ -39,8 +53,40 @@ export default defineConfig({
 					tag: 'meta',
 					attrs: {
 						property: 'og:description',
-						content: 'Build, mint, fund, and run Living Characters with XEL.',
+						content: SOCIAL_DESCRIPTION,
 					},
+				},
+				{
+					tag: 'meta',
+					attrs: { property: 'og:image:type', content: 'image/png' },
+				},
+				{
+					tag: 'meta',
+					attrs: { property: 'og:image', content: `${SITE_URL}/og-image.png` },
+				},
+				{
+					tag: 'meta',
+					attrs: { property: 'og:image:width', content: '1200' },
+				},
+				{
+					tag: 'meta',
+					attrs: { property: 'og:image:height', content: '630' },
+				},
+				{
+					tag: 'meta',
+					attrs: { property: 'og:image:alt', content: 'XEL Docs' },
+				},
+				{
+					tag: 'meta',
+					attrs: { name: 'twitter:title', content: 'XEL Docs' },
+				},
+				{
+					tag: 'meta',
+					attrs: { name: 'twitter:description', content: SOCIAL_DESCRIPTION },
+				},
+				{
+					tag: 'meta',
+					attrs: { name: 'twitter:image', content: `${SITE_URL}/og-image.png` },
 				},
 				{
 					tag: 'link',
