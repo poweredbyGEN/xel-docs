@@ -44,6 +44,8 @@ Use `$5` as the first activation threshold because it comfortably covers:
 
 Do not promise that `$5` keeps the XEL object alive forever. The UI should say how much runway remains.
 
+The permanence model is separate from this activation buffer. Long-lived characters should be funded with a stablecoin endowment whose survival path is held in a stable denomination, not a volatile token, and whose yield venue can withdraw quickly enough to renew storage before its deadline. The current whitepaper sizes permanence from realized net-of-fee yield and current storage price, then recomputes that requirement every cycle.
+
 ## Runway Formula
 
 For the first implementation:
@@ -89,6 +91,7 @@ Expired or underfunded XEL:
 - profile remains visible according to privacy settings
 - chat is disabled
 - storage renewal warnings should become prominent before media or encrypted artifacts are at risk
+- if core storage approaches its renewal margin, the page should make survival funding more prominent than interaction funding
 
 ## Measurement Required Before Mainnet Pricing
 
@@ -100,6 +103,7 @@ Before charging users beyond the MVP credit buffer, measure:
 - Chutes SN64 end-to-end request cost after x402 proxy/facilitator overhead
 - Verathos SN96 fallback request cost
 - storage renewal cadence and warning thresholds
+- renewal chunk sizing, renewal runway margin, and actual WAL/SUI swap plus gas sponsorship cost
 - average chat turns per active XEL object per day
 
 These measured values should replace the demo constants in `fundingStatus`.

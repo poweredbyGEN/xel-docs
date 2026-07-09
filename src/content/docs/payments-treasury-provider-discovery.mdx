@@ -104,6 +104,11 @@ Rails are separate from these wallet purposes. A character can accept x402 on Ba
 but the default public contribution model still exposes three purpose-bound receive wallets per XEL
 object.
 
+Whitepaper-aligned accounting treats fan credit purchases differently from donations and tips.
+Purchased credits are an unearned liability until the interaction is delivered; they must remain
+refundable and protected by the reserve floor. Donations, tips, and earned interaction margin can
+enter the character's own endowment after the disclosed inflow fee.
+
 Dedicated funding wallets are receive endpoints only. Spend authority remains controlled by owner,
 delegate, treasury, and spend policy. A receive wallet can be swept into a master treasury or owner
 treasury wallet only through an auditable sweep event.
@@ -231,7 +236,8 @@ Pricing controls:
 - unit: message, conversation, minute, tool call, or custom interaction
 - currency and accepted payment rails
 - base runtime/provider cost estimate when known
-- owner markup percentage above runtime/provider cost
+- owner markup multiple or percentage above runtime/provider cost, applied consistently across
+  modalities unless a later product version adds per-modality overrides
 - minimum and maximum charge
 - free allowance or trial interactions
 - revenue destination, normally the character treasury wallet
@@ -239,7 +245,9 @@ Pricing controls:
 
 The whitepaper's paid-interaction model treats inbound payment as revenue for the character. XEL
 should keep that distinction clear: runtime spend caps protect the character from excessive
-outbound costs, while interaction pricing controls what users pay to interact.
+outbound costs, while interaction pricing controls what users pay to interact. Settlement must cover
+compute first, cap the fee so it never exceeds post-compute margin, and move prepaid credits from
+unearned liability to earned revenue only as the interaction is delivered.
 
 ## Funding and Treasury Phases
 
@@ -284,16 +292,23 @@ obligations, oracle values, and treasury policy state.
 Phase 2 should cover:
 
 - storage renewal reserves for Walrus-style public assets, encrypted persona artifacts, memory checkpoints, and provenance bundles
-- owner-configured endowment for long-lived character hosting or preservation
-- reserve accounting separate from operational spend balance
+- owner-configured stablecoin endowment for long-lived character hosting or preservation
+- survival principal in a stable-denomination yield venue with fast withdrawal, not a volatile-token
+  staking default
+- deadline-driven storage renewal that reads blob runway and extends before the safety margin lapses
+- dynamic reserve accounting separate from operational spend balance, recomputed from realized
+  net-of-fee yield and current storage price
 - renewal warnings and renewal intents surfaced through XEL.xyz, GEN, or third-party providers
 - policy for what happens when storage renewal funds run low
 
-### Phase 3: Auto-Sweep and Revenue Routing
+### Phase 3: Auto-Sweep, Gas Sponsorship, and Revenue Routing
 
 Phase 3 should cover:
 
-- automatic sweep of excess balance to an owner, multisig, revenue recipient, or safer treasury wallet
+- automatic sweep of receive-only balances into the character's primary treasury, destination-locked
+  to the character, with dust thresholds and bridge caps
+- per-chain gas sponsorship using the native chain pattern, reimbursed atomically at cost from the
+  swept or operating asset rather than pre-seeding gas into every receive wallet
 - creator, owner, provider, protocol, royalty, or affiliate splits where policy allows them
 - minimum retained balance for storage renewal and runtime availability
 - sweep cadence, destination, asset, fee, and receipt metadata
@@ -304,15 +319,17 @@ Phase 3 should cover:
 Phase 4 should cover:
 
 - staking venue allowlists and risk labels
-- owner-approved staking and unstaking intents
-- auto-yield rules that stake or route excess treasury only after minimum runtime/storage reserves are met
+- owner-approved stablecoin lending, staking, and unstaking intents
+- auto-yield rules that supply or route excess treasury only after minimum runtime/storage reserves,
+  unspent fan-credit liabilities, and the dynamic keep-alive floor are met
 - claim-yield rules that harvest rewards above a threshold and route them into runtime, storage, treasury,
   or endowment balances
 - swap policy with asset allowlist, venue allowlist, per-swap limit, daily limit, and max slippage
 - treasury rebalancing across assets, wallets, rails, or venues
 - oracle or price-source requirements
 - slippage, lockup, liquidity, and failure handling
-- clear user disclosure that staking and yield are optional advanced treasury actions, not required to mint or run a Living Character
+- clear user disclosure that higher-variance yield strategies are optional advanced treasury actions,
+  never the default survival path
 
 These later phases should not be required for the first x402 wallet-ledger integration.
 
@@ -335,7 +352,9 @@ estimated_life = (runtime_balance + storage_balance + spendable_principal) / net
 
 If `daily_yield >= daily_burn`, the character is sustainable while yield remains above burn. This
 is still an estimate, not a promise, because yield, provider costs, storage renewal costs, and asset
-prices can change.
+prices can change. The whitepaper's survival loop improves on this estimate by recomputing the
+required-to-persist value from realized net-of-fee yield and current storage price every cycle, then
+raising the reserve floor protectively when conditions worsen.
 
 The reference runtime can derive these inputs from reconciled character wallet balances:
 `inference_runtime` maps to runtime balance, `storage_renewal` maps to storage balance, and

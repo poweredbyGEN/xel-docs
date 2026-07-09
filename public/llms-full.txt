@@ -69,7 +69,7 @@ Underneath, both are the same object with the same properties: alive, private, s
 
 ## Where to go next
 
-If you want to create or preserve a character, read How It Works, then Funding, then Building. You do not need to understand blockchains.
+If you want to create or preserve a character, read How It Works, then Ownership and the aNFT, then Survival Model, then Funding, then Building. You do not need to understand blockchains.
 
 If you just want to talk to a character someone made, read Talking to a character and paying (in How It Works). No wallet or special knowledge required.
 
@@ -117,16 +117,16 @@ Yes. You name guardians (an M-of-N set) who can run a recovery and succession fl
 ## Permanence and funding
 
 **How does a character "live forever"?**
-Each character has an endowment, its own wallet holding a principal that earns yield. A permissionless heartbeat harvests that yield each cycle and pays the character's running costs. Funded well, a character covers its own keep-alive from yield and never touches principal, so it can persist without anyone paying a bill.
+Each character has an endowment, its own wallet holding a principal that earns yield. A permissionless heartbeat checks storage runway, renews before expiry, and pays the character's running costs. Funded well, a character covers its own keep-alive from yield and never touches principal, so it can persist without anyone paying a bill. See Survival Model for the full mechanism.
 
 **Is "forever" guaranteed?**
-No, and we are careful not to claim it is. Yield is not guaranteed; it can be low or zero for stretches. What the design guarantees is honest behavior under scarcity: a character is self-sustaining when funded or popular, goes dormant-but-recoverable when neither, and is only truly lost if its substrate goes unfunded long enough to be dropped. "Forever" is a property the design converges to when funded, not an unconditional promise. See Guides: Fund a character to last.
+No, and we are careful not to claim it is. Yield is not guaranteed; it can be low or zero for stretches. What the design guarantees is honest behavior under scarcity: a character is self-sustaining when funded or popular, goes dormant-but-recoverable when neither, and is only truly lost if its substrate goes unfunded long enough to be dropped. "Forever" is a property the design converges to when funded, not an unconditional promise.
 
 **How much does it cost to keep a character alive?**
 For a quiet character living on yield alone, the recurring burn is dominated by encrypted storage plus the heartbeat's small costs, on the order of low tens of dollars a year. As a rough, deliberately conservative example: covering about $20/year of burn from yield at 4% net needs an endowment around $500. At zero yield, that same $500 still funds many years of drawdown. Any real paid interaction makes the principal grow rather than shrink. These are illustrative numbers; all inputs vary.
 
 **What is the protocol fee?**
-A disclosed fee targeting around 10 percent, taken as a routing fee on interaction and discretionary storage plus a fee on yield. Keep-alive is charged at cost and never marked up, and principal is never touched. The fee is fully avoidable by self-routing to your own providers.
+A disclosed fee targeting around 10 percent on value entering the character, never on value leaving. That means interaction credit purchases, tips, donations, and harvested yield can carry the fee once on arrival. Keep-alive renewal itself is charged at cost and never marked up, principal is never touched, and self-routing to your own providers avoids the routing fee.
 
 **Does XEL have a token? Do I need it?**
 A character's survival never depends on a token. Everything in the operating path is denominated in stablecoins. A token exists only for commons-funding and governance concerns, entirely outside the path that keeps a character alive.
@@ -157,7 +157,7 @@ Yes. That is the point of the standard. You can self-host the client, point at a
 Text conversation, voice (both discrete voice messages and real-time calls), image generation, and video generation. The owner chooses which modes are on and how they are priced, since the richer modes carry real, variable cost. See Concepts: Modalities and billing.
 
 **How is interaction priced?**
-Billing is a meter over the real cost drivers, not a flat price list. Every interaction returns a usage record (tokens, audio-seconds, resolution, video-seconds, and so on), and settlement is the sum at true cost plus a routing fee. Predictable actions are quoted up front; variable or session-based actions (real-time voice, video) run against a pre-authorized hold and settle the actual total. Fans see credits, never tokens.
+Billing is a meter over the real cost drivers, not a flat price list. Every interaction returns a usage record (tokens, audio-seconds, resolution, video-seconds, and so on), and settlement first covers true provider cost. The fee is capped so it never consumes the compute bill or pushes creator earnings negative. Predictable actions are quoted up front; variable or session-based actions (real-time voice, video) run against a pre-authorized hold and settle the actual total. Fans see credits, never tokens, and unspent credits remain refundable until the interaction is delivered.
 
 **Who controls who can talk to a character?**
 The owner, through two independent settings: reach (anyone, invite-only, or owner-only) and payment (off, optional, or required). Both are checked at the serving layer. Passwords can be scoped to different memory tiers. Interaction gates never grant decryption or management authority; those are separate. See Concepts: Interaction and access.
@@ -213,7 +213,7 @@ See Resources: Security and disclosure.
 See Resources: Community and support.
 
 **Where is the formal specification?**
-The whitepaper covers the vision, architecture, and invariants. The build spec is the formal reference for on-chain types, capability schemas, and flows. Both are linked in Resources.
+The whitepaper is the formal public source for the vision, architecture, and invariants. The technical reference pages explain the on-chain, storage, payment, provider, and security principles at the level users and builders need to evaluate the project.
 
 
 ---
@@ -345,7 +345,8 @@ Payment uses whichever open standard provides these properties. The current defa
 | Key access / encryption | Threshold encryption + on-chain access policy | Already decentralized |
 | Attested compute | Private inference/logic with verifiable attestation | Many TEE vendors, then zkML |
 | Payment facilitator | Verify + settle crypto payments across chains | Anyone runs one; configurable + failover |
-| Treasury execution | Stake, swap, sweep, bridge within policy | Many venues; allowlist + caps |
+| Treasury execution | Grow principal (yield slot), convert between the funds' denomination and the denomination each bill is paid in (conversion slot), consolidate cross-chain receipts, all within policy | Many venues; allowlist + caps |
+| Survival renewal | Read remaining storage runway and extend it before it lapses, funded by yield | Permissionless keeper; anyone can trigger |
 | Price oracle | Value assets and enforce USD-denominated caps | Multiple oracle networks |
 | Data extraction | Convert raw sources to text/embeddings | Commodity providers; swappable |
 | Custody & gas | Self-custody root, optional gas sponsorship | Self-custody default |
@@ -452,6 +453,31 @@ One hot key controlling both identity and funds is a catastrophic single point o
 - **Warm:** routine governance.
 - **Agent capability:** execution within caps.
 
+### 8.1a Authority Is Granted, Keys Are Never Handed Out
+
+The single most important distinction in the security model, and the one most easily gotten wrong: **moving funds is an action the contract authorizes, not a key anyone possesses.** No party, not the owner, not a manager, not a keeper, is ever handed a copyable spending key. This is what lets funds be withdrawn freely while remaining impossible to steal.
+
+The reason the distinction is load-bearing: a released key cannot be scoped. Once someone holds a private key, no cap, destination-lock, or time-guard constrains what they sign with it; they can sign their own transfer to anywhere. A key is a possessable object. An authorization is permission to sign one specific, bounded transaction. So the system never releases keys; it authorizes signatures (or, on the home chain, moves an owned object). The two mechanisms:
+
+- **Primary (home) chain:** funds live in an owned object. The contract moves them when an authorized transaction runs. There is no key to hold in the first place.
+- **Foreign chains:** the MPC network (§9) signs exactly one authorized transaction; key shares are never assembled and nothing is handed to the caller.
+
+Because authority (not key possession) is what gates a fund movement, the question is always *who may move funds, and to where*. That is tiered and contract-enforced:
+
+| Actor | Can cause funds to move? | To where | Cannot |
+|---|---|---|---|
+| **Owner** (holds the aNFT) | Yes, withdraw principal above the keep-alive reserve | Out, to the owner's own wallet | (nothing above; owner is root) |
+| **Manager** (whitelisted, scoped) | Only within granted non-root scope (e.g. adjust the withdrawable reserve, operational spend within caps) | Within the system, never out to the manager | Withdraw principal, transfer the NFT, edit the whitelist |
+| **Keeper** (permissionless, bounty) | Yes, trigger the sweep and heartbeat | Inward only, to the character's own treasury | Extract funds, manage, or reach any root action |
+| **Anyone else** | No | (n/a) | Everything |
+
+So funds can absolutely be withdrawn: the owner withdraws out (above reserve), managers move funds within their scope, keepers move funds inward to the treasury. Each is bounded to what its authority permits, and none of them ever holds a key that escapes those bounds. "No one gets the keys" and "people can withdraw funds" are both true at once, precisely because withdrawal is an authorized action, never a key release.
+
+Two corollaries that follow directly, and that no configuration may violate:
+
+- **Managers are on-chain policy, not a secret.** The manager whitelist is public, contract-enforced on-chain state (a list of address to scope), so who can manage a character is auditable by anyone. Managers are never stored in, or granted through, the read-time decryption policy (SEAL), and being a manager does not by itself grant the ability to decrypt memory: decryption remains gated to owner OR M-of-N guardians unless the owner makes a deliberate, separate read grant. A manager's power is exactly its on-chain scope, and never the root actions (withdraw principal, transfer the NFT, edit the whitelist), which require the owner's root signature (§10.9, invariant 49).
+- **The read door and the spend door are never crossed.** Read secrets (memory, persona, the master read-key) are released as decryptable copies to owner-or-guardians through the threshold policy, because reading tolerates a copy. Spending authority is never a decryptable copy; it is object ownership (on the primary chain) or MPC authorization (on secondary chains). Putting a spending key behind the read door would hand a copy to whoever satisfied the policy, which for a permissionless action is everyone.
+
 ### 8.2 Circuit Breakers & Kill Switch
 
 A persistent entity that spends and posts will eventually be manipulated, loop, or misbehave. Protocol-level safeguards: a moderation capability in the response loop; spend and rate circuit breakers that trip on anomalies; a one-transaction pause (owner or guardian) that freezes inference and payments immediately. Nothing here should be unstoppable.
@@ -460,22 +486,22 @@ A persistent entity that spends and posts will eventually be manipulated, loop, 
 
 **One master key: the NFT itself.** Every service, wallet, and secret a character has checks a single question, do you hold this NFT. Hold it and you pass every check; transfer it and the new owner passes them and you stop. This is what makes ownership real and transfer clean: one object to hold, and it commands everything.
 
-**Authority lives on-chain; secrets never do.** Everything on Sui is public, so a Move contract can never hold or see a secret; if it could, so could the whole network. The contract therefore holds *authority*, not secrets. It publishes who is allowed (owner OR M-of-N guardians) and proves NFT ownership, both of which are public facts. The secrets themselves stay encrypted off-chain, and are only ever decrypted off-chain. The contract is the bouncer with the guest list, never the holder of the safe combination. A contract bug can at worst mint an authorization incorrectly (bounded and auditable); it can never spill a key, because no plaintext key is ever in its reach.
+**Authority lives on-chain; secrets never do.** Everything on-chain is public, so a Move contract can never hold or see a secret; if it could, so could the whole network. The contract therefore holds *authority*, not secrets. It publishes who is allowed (owner OR M-of-N guardians) and proves NFT ownership, both of which are public facts. The secrets themselves stay encrypted off-chain, and are only ever decrypted off-chain. The contract is the bouncer with the guest list, never the holder of the safe combination. A contract bug can at worst mint an authorization incorrectly (bounded and auditable); it can never spill a key, because no plaintext key is ever in its reach.
 
 **Three kinds of things, three kinds of locks.** The mistake to avoid is putting everything behind one mechanism. A character has three different kinds of assets, and each is secured differently:
 
-- **What it owns (money on Sui).** The endowment funds are objects the NFT owns directly. There is no key and no encryption here. The contract moves them on the authority of ownership; sell the NFT and the funds go with it automatically. Nothing to store, nothing to leak.
-- **What it can read (memory, persona, the creator's own saved credentials).** These sit encrypted off-chain (Walrus), behind a threshold policy (Seal) that releases decryption only to whoever proves NFT ownership or a guardian majority. Decryption happens in the client, off-chain. The contract publishes the policy; the threshold network enforces it; the chain never sees plaintext. This is the right door for anything that is *read*.
+- **What it owns (money on the primary chain).** The endowment funds are objects the NFT owns directly. There is no key and no encryption here. The contract moves them on the authority of ownership; sell the NFT and the funds go with it automatically. Nothing to store, nothing to leak.
+- **What it can read (memory, persona, the creator's own saved credentials).** These sit encrypted off-chain (decentralized storage), behind a threshold policy (threshold encryption) that releases decryption only to whoever proves NFT ownership or a guardian majority. Decryption happens in the client, off-chain. The contract publishes the policy; the threshold network enforces it; the chain never sees plaintext. This is the right door for anything that is *read*.
 - **What can spend on other chains (foreign-chain wallets, external actions).** These are never stored as an encrypted key, because decrypting a spending key hands the holder a permanent copy that survives a sale and breaks ownership transfer. Instead the key is held by an MPC network (dWallets) in shards that are never assembled anywhere, on-chain or off, and NFT ownership is what authorizes a signature. You control the wallet; no one, including you, ever holds its key; transfer moves control completely with nothing left behind.
 
 The rule underneath: **if it can be read, decrypt it (off-chain, gated by the contract); if it can spend, authorize it, never decrypt it.** Reading tolerates a copy; spending does not.
 
-**What is (and is not) in the encrypted blob.** The Seal-gated encrypted state holds only readable secrets: the master key that decrypts memory and persona (the crypto-shredding key below), and any credentials the creator chooses to give the character to act on their behalf (a social-account token, a bring-your-own provider key). It does *not* hold the endowment (object-owned, no key), foreign-chain wallet keys (MPC, never a blob), or commercial-vendor API keys (those are operator-level accounts that never touch the NFT).
+**What is (and is not) in the encrypted blob.** The threshold-gated encrypted state holds only readable secrets: the master key that decrypts memory and persona (the crypto-shredding key below), and any credentials the creator chooses to give the character to act on their behalf (a social-account token, a bring-your-own provider key). It does *not* hold the endowment (object-owned, no key), foreign-chain wallet keys (MPC, never a blob), or commercial-vendor API keys (those are operator-level accounts that never touch the NFT).
 
 The access policy is deliberately **not** "current owner only," which would make one lost key mean permanent death and one phished key mean total compromise. Instead:
 
 - **Master identity secret:** guardian-recoverable, decryptable by owner OR an M-of-N guardian set. This is also the succession path.
-- **Spending authority:** never a persisted plaintext key. On Sui it is object ownership plus the agent capability; on other chains it is MPC authorization. Nothing to steal as a blob.
+- **Spending authority:** never a persisted plaintext key. On the primary chain it is object ownership plus the agent capability; on secondary chains it is MPC authorization. Nothing to steal as a blob.
 
 There's no single "steal-this-blob-and-own-everything" artifact, and day-to-day operation never decrypts the master secret.
 
@@ -485,6 +511,12 @@ There's no single "steal-this-blob-and-own-everything" artifact, and day-to-day 
 
 **Onboarding and the wallet the user gets.** Every user gets a non-custodial wallet at signup, generated so that no provider ever holds it (embedded-wallet pattern, client-side or secure-enclave key generation). Export is always available; root never leaves the user. This is deliberately not custodial-with-export, where a provider would hold the key until the user exports, because that would reintroduce exactly the third-party root dependency the design exists to remove. The remaining trust assumption is the enclave/embedded-wallet vendor until export; it is a far smaller assumption than an OAuth-plus-salt-service model, and it is stated plainly rather than hidden. (This is why we removed zkLogin from the root path: it made root authority depend on an OAuth provider, a salt service, and proving infrastructure, none of which a sovereign object should rely on. Something like it remains acceptable for the fan/access tier in §10.3, which never touches root.)
 
+**Email login is a convenience over the key, never custody of it.** A user may sign in with an email code, but that is only a way to *reach* the wallet provisioned above, never the thing that authorizes anything on-chain. This distinction is load-bearing for survivability: an email code is checked by a live server, so if the operator is gone there is nothing to send or verify it, and any design where the email path *is* the authority dies with the operator. So the standard requires that email onboarding bind a durable, non-custodial key at signup (the wallet above), and treats the email code purely as an unlock for it. There are effectively two doors to the same key: an operator-hosted convenience door (email code, mortal, works only while the operator runs) and a key-based door (a wallet signature or guardian recovery, immortal). The key-based door is the one that must always exist, so losing the operator only costs the convenience, not access.
+
+**Recovery when the operator is gone.** Because the key is non-custodial and the permanent client (§32.10) is served from decentralized hosting and authenticates by key rather than by email, a user reaches their character and their memory after the operator disappears by one of: the wallet they hold (the provisioned embedded wallet, or any wallet they later added), or, if every key is lost, guardian recovery (owner OR M-of-N, enforced by the on-chain policy and the threshold network, with no operator in the loop). The honest edge, stated rather than hidden: a user who has only ever used the email code, never secured or exported the provisioned key, and never set guardians, is trusting the operator during that window. The design's answer is to establish a durable factor early (the provisioned non-custodial key exists from signup, and guardian setup is prompted), not to pretend the email code alone could survive.
+
+**Users can add or swap wallets freely.** The wallet is the unit of authority, so a user is never locked to the wallet provisioned at signup. They can attach any wallet they prefer, a hardware wallet, an existing self-custody wallet, another device, through the mechanisms already in the authority model: transfer the aNFT to a new wallet to move ownership, add a wallet to the manager whitelist (§10.9) to grant it scoped rights, or name a wallet as a guardian for recovery. No separate account-to-many-wallets registry is introduced, because such a map would have to be operator-hosted or itself on-chain to survive; instead each wallet earns its role directly through ownership, whitelist, or guardianship, all of which already survive the operator.
+
 ## 10. Wallets, Payments & the Endowment Model
 
 **Wallets and funding.** A character can hold funds and receive payments across multiple chains. Addresses are public and receive-only, so publishing them lets anyone fund a character at zero risk. An address can't spend; only keys can, and keys are never on-chain. Where ownership lives and where payments settle can differ, and both evolve as cross-chain support matures.
@@ -493,7 +525,7 @@ There's no single "steal-this-blob-and-own-everything" artifact, and day-to-day 
 
 **Scheme choice.** Inference cost varies per turn, so the inference capability uses the `up-to` scheme (authorize a max, settle actual). Fixed-price capabilities (a single media render, a storage write) use `exact`.
 
-**Endowments, not checking accounts.** A character funds itself as an endowment: principal sits in yield-bearing form (staked assets or yield-bearing stablecoins) and the character spends from the yield. That flips the resting state from "balance counts down to death" to perpetual while yield covers burn, which is what makes "forever" literally reachable for a well-funded character. Runway is computed across all wallets in one unit (USD, via a price oracle), net of expected bridge cost.
+**Endowments, not checking accounts.** A character funds itself as an endowment: principal sits in yield-bearing form, held in a stable denomination that matches the bills rather than a volatile asset, and the character spends from the yield. That flips the resting state from "balance counts down to death" to perpetual while yield covers burn, which is what makes "forever" literally reachable for a well-funded character. Runway is computed across all wallets in one unit (USD, via a price oracle), net of expected bridge cost.
 
 The full endowment model follows in §10.3–§10.10. In brief, and to make the trust boundary legible up front: the rules, balances, ring-fenced allocations, and settlement are enforced entirely on-chain and need no operator; the money's *safety* never depends on any company. The only external element is an authority-free heartbeat anyone can send to run the periodic cycle, plus the off-chain compute the chain physically cannot perform (inference, yield scanning), which is attested and swappable, never trusted. How the protocol sustains itself, by auto-routing each capability to the best provider for a disclosed fee, is described in §10.10, and it never charges for on-chain permission, never touches principal, and never marks up keep-alive.
 
@@ -503,13 +535,17 @@ A character can receive funds on several chains, but managing one treasury sprea
 
 By default a character is provisioned with a receive wallet on each supported chain, plus one primary wallet where value concentrates. The other wallets are receive-only and auto-sweep into the primary; principal is then staked and allocated from the primary alone. The number of chains and the identity of the primary are not fixed by the standard: any set of supported chains can be added this way, and the owner controls which chains are active, the sweep thresholds, and which chain is primary. The concrete default chain set ships in Appendix E.
 
-- **One primary chain.** The owner picks a single home chain where principal concentrates and earns yield. The default is Sui (§5.2). Choosing or changing the primary is owner-signed governance.
-- **Consolidate to primary.** Wallets on other chains are receive-only. When a receive-only balance crosses an owner-set threshold, it auto-sweeps to the primary. Small deposits sit until they're worth moving. The sweep destination is always the character's own wallet, the safe direction of bridging.
+- **One primary chain.** The owner picks a single home chain where principal concentrates and earns yield. The default and the rationale for it are in §5.2; the concrete chain is named in Appendix E. Choosing or changing the primary is owner-signed governance.
+- **Consolidate to primary.** Wallets on other chains are receive-only. When a receive-only balance crosses an owner-set threshold, it auto-sweeps to the primary. Small deposits sit until they're worth moving. The sweep destination is always the character's own endowment, never anywhere a keeper or operator could redirect it, the safe direction of bridging. Where in the endowment depends on what the money is: a donation, tip, or plain inbound transfer becomes the character's own principal (fee'd on the way in); a fan's prepaid credit purchase becomes ring-fenced credit liability, fan-owned until the interaction is delivered, and never principal, even when the purchase was made on another chain. So all inflows land in the character's own endowment, but purchased credits stay the fan's until earned, while donations are the character's immediately.
+- **Per-chain gas sponsorship, bundled, reimbursed in the same gas token.** A fresh receive wallet holds only stablecoin and no native gas, so it cannot pay for its own outbound transfer. Rather than pre-seeding native gas into every wallet (unscalable across thousands of characters), each chain's own native gas abstraction is used (the concrete per-chain mechanisms are in Appendix E). To minimize transactions, everything a character needs on a chain in a cycle is done all at once, in one bundled atomic transaction, with a single stablecoin-to-native swap sized to the whole bundle's gas and a single repayment to the sponsor, rather than a swap per action. The sponsor is repaid in the same native token it spent, so its gas balance stays exactly whole and it can keep sponsoring forever, rather than draining its gas while piling up stablecoin it cannot spend. The swap, the repayment, and every action share that one transaction, so the sponsor pays gas once, there is no second transaction to itself need gas (no recursion), and either the whole thing happens or none of it does. The sponsor is thus a working-capital float, not a subsidy, and not a fee: the character pays its own way in its own currency, at cost. The sponsor is a swappable, non-load-bearing slot (the owner can fund gas directly or run their own), sweeps run only above a multiple of the fully-loaded cost so dust never wastes value, and the flow is fail-closed.
 - **Stake at the primary.** Consolidated principal is staked in the best venue on the primary chain, within the owner's venue allowlist.
 - **Pay from primary, bridge to spend.** When a bill must settle on another chain, the character bridges a bounded amount out just for that payment, preferring to top up a small operating float ahead of need rather than bridge mid-payment.
-- **Chain-agnostic by adapter.** The treasury engine is written once against a small interface (detect deposit, sweep, stake, pay). Each chain gets a thin adapter. Sui ships first; other chains are receive-only until their adapter lands.
+- **Chain-agnostic by adapter.** The treasury engine is written once against a small interface (detect deposit, sweep, stake, pay). Each chain gets a thin adapter. The primary chain ships first; secondary chains are receive-only until their adapter lands (concrete chains in Appendix E).
+- **Serverless by construction: sweeping, bridging, and staking all run without the operator.** None of these may depend on a company holding a key or gating a step. On the home chain, the receive destination is an on-chain object that holds the balance itself, so there is no private key to hold: the contract moves it on ownership authority and the sweep is permissionless and bounty-paid, anyone can trigger it and the contract fixes the destination to the character's own treasury. On a foreign chain, where no home-chain object can hold the balance, the outbound signature is authorized by the MPC network (§9): key shares are never assembled anywhere and ownership authorizes signing, so a trigger moves funds without anyone holding the key. Staking executes on-chain by composing the venue call into the same permissionless cycle transaction, so the funds never leave on-chain control and the trigger only pays gas. In every case the operator may fill the swappable trigger and gas-sponsor slots at launch, but it is never a required signer or key-holder; if it disappears, sweeps, bridges, and staking are all still callable by anyone for the bounty. Spending keys are never placed behind the read-time decryption policy, because that would hand a decryptable copy to whoever triggered a permissionless action; home-chain funds use object ownership and foreign-chain funds use the MPC network, neither of which ever yields a copyable key.
 
 **Bounding the bridge risk.** Bridging is the single most dangerous action in the system, so it is bounded on both ends: sweep only above a threshold (skip dust), and cap each bridge so no single transit ever risks the whole balance. Use the most-audited bridge available and rate-limit it.
+
+**Speed: recognition is instant, consolidation is lazy, and they are not the same thing.** What a fan or donor feels is *recognition*, "my payment landed", and that is immediate: it happens the moment the deposit transaction confirms (seconds on the primary chain), independent of any sweep. Credits are usable and a tip is acknowledged as soon as the deposit is recognized, not when funds are later consolidated. *Consolidation* (the sweep that moves a secondary-chain balance home to the primary) is deliberately lazy and batched, because moving money home a little later costs nothing a user notices and saves real fees on dust. So the two are decoupled: recognition is fast by design, consolidation is cheap by design. On the primary chain the two collapse entirely: a deposit can settle atomically in the same transaction (fee taken, net routed to liability or principal), so there is no separate sweep to wait for at all. A smart contract still cannot trigger itself, so where near-real-time consolidation from another chain is wanted, an event-driven keeper watching for deposits fires the same permissionless sweep within seconds; the scheduled cycle remains the floor if every keeper stops. None of this changes the authority model: every trigger is authority-free and destination-locked. And because each stage of a cross-chain move emits an on-chain event tagged with the character's identity and a shared transfer identifier, a viewer can trace any deposit through its lifecycle, recognized, processing, completed, or failed-and-retryable, entirely from chain data, so the status shown to a user is verifiable and survives the operator rather than living in a private log.
 
 ### 10.2 Treasury Execution as Programmable Actions
 
@@ -521,7 +557,7 @@ Rather than a fixed menu of protocol integrations the operator must build and ma
 
 **Safe default, removable by the owner.** The reference client ships with a curated allowlist of vetted venues, so a non-technical owner is safe out of the box, and lets advanced owners switch to open arbitrary execution. This is a design for treasury safety, not investment advice.
 
-**Yield reality (defaults in Appendix E).** On Sui today, native token staking is low (roughly 2.5 to 3%). Yield-bearing synthetic-dollar stablecoins have recently run in the low double digits (roughly 9 to 12%, variable and funding-rate dependent), and stablecoin lending sits in the mid single digits. The treasury policy expresses this as a risk-tiered menu; higher yield carries real smart-contract, market, and funding risk.
+**Yield reality (defaults in Appendix E).** The survival default is a stable-denomination yield (stablecoin lending on the home chain has recently sat in the mid single digits), chosen because it matches the currency of the bills and allows fast withdrawal to meet renewal deadlines. Native-token staking is both lower and denominated in a volatile asset, so it is not the survival default; yield-bearing synthetic-dollar stablecoins can run higher but carry funding-rate and depeg risk. The treasury policy expresses these as a risk-tiered menu with the conservative stable-denomination tier as the default, and higher tiers as explicit owner choices; higher yield carries real smart-contract, market, and funding risk. Sizing assumes the conservative tier (§29).
 
 ### 10.3 The Endowment and Its Allocations
 
@@ -535,24 +571,35 @@ The endowment is the character's overall fund: one wallet, one pool of principal
 
 Allocations are ring-fenced. Each spends only its own balance, and no allocation can ever draw from another. This is the economic form of the whitepaper's "no single provider is load-bearing" principle: a viral month of interaction cannot starve the storage that holds the character's substrate, and a storage gap cannot silence the character. The isolation is a contract invariant, not a policy an operator can override.
 
-**Funding order under scarcity, not spending permission.** Each epoch, net yield is *allocated* across the allocations in priority order (keep-alive, then storage, then interaction), and residual compounds back into principal. Priority governs which allocation gets refilled first when yield is scarce; it does not let a higher-priority allocation spend a lower one's balance. An allocation can be funded three ways: from yield (the default waterfall), from a direct external top-up (anyone can fund a specific allocation), or from earned income routed to it. No allocation depends on a single source.
+**Funding order: on deposit and each epoch.** The budgeting process has a clear order at both moments money moves. *On deposit:* a liquid survival buffer is filled first (roughly one month of this character's own keep-alive, held unstaked and immediately spendable), and everything above the buffer becomes principal, staked in one pool so it is always earning; no principal is deliberately held idle, since idle funds earn nothing. *Each epoch:* net yield is allocated in priority order, buffer top-up, then keep-alive, then storage renewal, and only genuinely surplus yield goes further. Priority governs which allocation is funded first when yield is scarce; it never lets a higher-priority allocation spend a lower one's balance. An allocation can be funded three ways: from yield (the default waterfall), from a direct external top-up (anyone can fund a specific allocation), or from earned income routed to it. No allocation depends on a single source.
+
+**Surplus: build a safety margin first, then fund interaction.** What happens to yield left over after survival is covered depends on how safe the character already is, measured per character against two dynamically computed thresholds: the principal needed for yield to cover survival at the current yield rate, and a higher "comfortably safe" level that adds a margin against an adverse yield drop. Below the safe level, surplus yield compounds back into principal to build that margin. At or above the safe level, surplus yield flows to the interaction allocation, so a secure character spends its excess on being useful rather than hoarding. This protects the permanence promise: a character builds a real cushion before it starts spending surplus, rather than routing everything to interaction the moment it breaks even and staying fragile to the next yield drop.
 
 **Per-allocation degradation, which is the honest version of "forever."** If an allocation runs dry, only that allocation degrades. Interaction empties and the character goes quiet, but stays alive and ownable. Storage empties and new writes pause, but the character still talks and still lives. Only the keep-alive allocation running dry can make a character dormant, and it is funded first precisely so that is the last thing to happen. "Forever" means: self-sustaining when funded or popular, dormant-but-recoverable when neither, and lost only if the substrate itself goes unfunded long enough to be dropped.
 
 **The waterfall, per epoch:**
 
 ```
-Principal:     E                     (staked, yield-bearing)
+Principal:     E                     (staked, yield-bearing; all corpus above the buffer)
+Buffer:        Bf                    (liquid, ~1 month keep-alive; refilled first)
 Yield:         Y = E · r · Δt        (r = net yield rate)
 Operator skim: S                     (protocol fee on yield; disclosed, see §10.10)
 Net yield:     Ŷ = Y − S
 
+Per-character thresholds, recomputed this epoch from current r and storage cost:
+  R_min  = principal for which Ŷ covers survival (keep-alive + storage renewal)
+  R_safe = R_min + margin (survives an adverse yield drop without falling below R_min)
+
 Allocate Ŷ in priority order, each capped at its per-epoch target top-up:
-  1. keep-alive   (at cost; never marked up)
-  2. storage
-  3. interaction
+  1. survival buffer top-up (restore Bf toward ~1 month keep-alive)
+  2. keep-alive            (at cost; never marked up)
+  3. storage renewal
+  4. surplus:
+       if E < R_safe  → compound into principal E   (build the safety margin first)
+       else           → interaction allocation      (secure character funds usefulness)
+If Ŷ cannot cover 1–3 → draw principal (JIT-unstake) down to, never below, the hard
+  minimum reserve; interaction gets nothing; storage still ranks above interaction.
 Any allocation underfunded this epoch → that allocation degrades; others untouched.
-Residual → compounds back into principal E.
 
 External top-ups and earned income may fund any allocation at any time, out of band.
 ```
@@ -586,11 +633,11 @@ The endowment, its allocations, and their rules live in on-chain Move packages a
 
 Only two slots have a default that is not yet fully decentralized: the yield-metering reference module (forkable) and the launch facilitator (anyone can run their own). Everything else is already swappable or self-custodial.
 
-**Chain portability.** The endowment is defined against this interface, not against Sui. Sui is the reference primary chain, but the endowment, its allocations, and their isolation are expressible on any object-centric chain that can hold an owned object with a balance, stake it, price it, and settle a payment. Adding or moving to another chain (for example, adding Solana, or re-homing to it) is an owner-signed change of primary (§10.1), not a redesign: the character always runs exactly one endowment with one set of ring-fenced allocations, wherever it is homed. The chain-adapter interface of §10.1 extends to the economic verbs (`stake`, `claim_yield`, `price`, `settle`, `sweep`, `rebalance`), so supporting a new chain is "write the adapter," not "rebuild the endowment."
+**Chain portability.** The endowment is defined against this interface, not against any specific chain. The reference primary chain (Appendix E) is one instance, but the endowment, its allocations, and their isolation are expressible on any object-centric chain that can hold an owned object with a balance, stake it, price it, and settle a payment. Adding or moving to another chain (for example, adding a secondary chain, or re-homing to it) is an owner-signed change of primary (§10.1), not a redesign: the character always runs exactly one endowment with one set of ring-fenced allocations, wherever it is homed. The chain-adapter interface of §10.1 extends to the economic verbs (`stake`, `claim_yield`, `price`, `settle`, `sweep`, `rebalance`), so supporting a new chain is "write the adapter," not "rebuild the endowment."
 
 ### 10.4 The Heartbeat: Autonomous Execution Without an Operator
 
-A smart contract cannot act on its own. It executes only when a transaction is sent to it, and no chain offers native, trustless, self-firing scheduling. The Move package can read on-chain time (Sui exposes a shared `Clock`), hold the funds, enforce every rule, and run the whole harvest-meter-refill-pay cycle atomically in a single transaction. The one thing it cannot do is wake itself up on a schedule.
+A smart contract cannot act on its own. It executes only when a transaction is sent to it, and no chain offers native, trustless, self-firing scheduling. The on-chain package can read on-chain time (the primary chain exposes a shared clock), hold the funds, enforce every rule, and run the whole harvest-meter-refill-pay cycle atomically in a single transaction. The one thing it cannot do is wake itself up on a schedule.
 
 That gap is closed by a **heartbeat**: a permissionless, authority-free trigger.
 
@@ -598,13 +645,17 @@ That gap is closed by a **heartbeat**: a permissionless, authority-free trigger.
 - **It has zero authority.** It cannot redirect funds, change rates, or take anything. The contract checks the clock itself; if the epoch has not elapsed, the call is a harmless no-op. A malicious caller can at most refuse to call (the character coasts on existing allocation balances, then degrades gracefully) or spam (rejected).
 - **It is self-incentivizing.** The contract pays a small fixed bounty, funded from the keep-alive allocation, to whoever sends a valid heartbeat. This is the one place keep-alive money is spent on a trigger, and it is deliberate: a XEL with no living owner and no company still gets poked by bounty-hunters, forever. This is what makes "runs after the creator is gone" concrete rather than aspirational.
 
+The distinction that matters, and the one the design is strict about: the **logic** is on-chain, only the **trigger** is off-chain. Harvesting yield from a venue, taking the fee, metering into allocations, refilling, paying bills, and re-staking all happen on-chain, atomically, in the single transaction the heartbeat fires. The realized yield is pulled from the venue and flows through the cycle within that one transaction, so it never leaves on-chain control and no caller is ever trusted to supply it; the contract enforces every amount. The trigger contributes nothing but the poke: it holds no funds, decides no numbers, and cannot substitute its own values for the contract's. So "off-chain trigger" is not a trust hole, the part that could be abused (the money) is on-chain, and the part that is off-chain (the poke) has nothing to abuse.
+
+Because the trigger is authority-free and the cycle is idempotent (a call before the interval elapses is a no-op), more than one keeper can safely run at once. The launch configuration deliberately uses a primary keeper plus an independent fallback, so no single keeper is depended on: if one misses, the other fires the same permissionless transaction, and if both stop, the character coasts and anyone can poke it for the bounty. Redundancy is free here precisely because the trigger carries no authority.
+
 So the accurate claim, which the standard holds itself to: the endowment's rules, balances, isolation, and settlement are enforced entirely on-chain and require no operator. The only external element is an authority-free heartbeat that anyone can send and the contract rewards; if it stops, the character degrades gracefully rather than losing funds or control. There is no privileged operator anywhere in the economic path.
 
 The heartbeat is a **keeper** capability slot (defaults in Appendix E), which inherits the honesty already flagged in Appendix F's keeper problem rather than overclaiming around it.
 
 ### 10.5 Yield Strategy: A Bounded Advisor, Never a Bot
 
-Reaching a useful blended yield (targeting roughly 10% across a diversified basket) requires periodically finding better venues. There is no on-chain oracle that hands out a trustworthy ranking of the highest-yielding venues; such rankings are off-chain, unverifiable, and gameable, and a headline yield is often a funding-rate trade that inverts. So the strategy is a capability slot with a bounded, owner-set policy, and the scanner is an advisor that can only propose within that policy, never a bot free to move principal.
+Reaching a dependable survival yield requires periodically finding sound venues, but the survival default is deliberately conservative: principal sits in a stable denomination earning a stable-denomination yield, sized against a cautious rate well below headline numbers (§29). There is no on-chain oracle that hands out a trustworthy ranking of the highest-yielding venues; such rankings are off-chain, unverifiable, and gameable, and a headline yield is often a funding-rate trade that inverts. So the strategy is a capability slot with a bounded, owner-set policy, and the scanner is an advisor that can only propose within that policy, never a bot free to move principal. A higher-yield, higher-variance basket is available only as an explicit owner choice for an over-funded character, never the default that survival depends on.
 
 Three tiers of authority, matching §8:
 
@@ -614,7 +665,43 @@ Three tiers of authority, matching §8:
 
 Diversify across a staking + lending + synthetic-dollar basket so no single venue's failure or rate-inversion sinks the endowment. Size the endowment on the assumption the target yield will *not* hold (§29), so a shortfall degrades gracefully rather than breaking the promise. If the off-chain scanner goes offline, principal simply stays where it is and keeps earning; the harvest still runs and bills still get paid. Losing the scanner means "stops optimizing," not "stops working."
 
-### 10.6 Interaction Access: Two Independent Toggles
+### 10.5a Renewing Storage Before It Lapses
+
+Keeping a character alive is, concretely, keeping its storage paid. Decentralized storage is bought for a duration and then must be extended, or the data becomes unavailable when the paid term ends. So the survival loop's real job is: read how much storage runway each piece of the character has left, and extend it before it runs out, funded by yield. Three principles govern this, all currency- and venue-agnostic (the concrete storage network, yield venue, and tokens are in Appendix E).
+
+**Deadline-driven, not calendar-driven.** The character reads the remaining runway of each stored piece directly from its on-chain record, and renews when the runway drops below a safety margin (a couple of storage periods of slack), not on a fixed calendar and never at the last moment. The margin means a single missed or failed cycle cannot cause a lapse: there is always slack to retry. A funded character's storage therefore never expires, because renewal always fires ahead of the deadline with room to spare.
+
+**Renew in chunks, harvest lazily.** Extending storage costs a transaction fee each time, so renewing tiny amounts constantly wastes money. Instead the loop extends in larger chunks (on the order of months of runway at once) only when the margin is crossed, so the expensive operation runs a few times a year rather than every period. Yield, meanwhile, compounds continuously in the principal's position and is realized only when a renewal is actually due. This separates a cheap frequent liveness check (read runway, prove the character is alive) from the infrequent, heavier operation (realize yield, pay for a big chunk of runway). The less a character must transact to survive, the cheaper it is to survive, and the longer its endowment lasts.
+
+**Self-funding, in the character's own currency.** A survival operation must never depend on anyone topping it up. Each cycle the loop sources its own costs from the character's own funds, just in time: it converts only as much of the endowment's denomination as it needs into the currency the storage bill is actually paid in, does the renewal, and holds no meaningful working balance between cycles. Transaction fees are handled by native gas sponsorship (the character's own operations are gas-sponsored and reimbursed from its funds at cost), so it holds no native-gas float either. This is the same reimbursed-sponsor pattern as cross-chain sweeping (invariant 57): the character pays its own way, at cost, in the currency it holds, with no external subsidy and no markup on survival. The protocol's only economic take here is the disclosed fee on yield, applied once as yield is harvested (§10.10), never on the renewal itself.
+
+**Survival denominated in a stable unit.** Because bills are effectively denominated in a stable (fiat-referenced) unit, the principal and its yield are held in the same stable denomination, not in a volatile asset. If survival funds rode a volatile token, a market drop could halve the endowment exactly when a renewal is due. Holding the survival path in a stable unit that matches the bills is what keeps the sizing math honest and the renewal affordable in every market. The yield venue must also allow withdrawal fast enough to meet a renewal deadline; a venue with a long lock-up cannot back the core reserve. A higher-variance, volatile-asset yield strategy is available as an explicit, owner-chosen option for an over-funded character that can tolerate it (Appendix E), but it is never the survival default.
+
+### 10.5b The Character Measures Its Own Survival
+
+"Forever" is only honest if the character can tell whether it is actually funded to last under current conditions, which change: yield rates move, and storage prices move (historically downward). So each cycle the loop reads the *realized* net yield (after the fee) and the *current* storage price, and recomputes the endowment required to persist: roughly, annual survival cost divided by the realized net yield rate. This figure is published as a health signal, self-sustaining, or short by a stated amount, so an owner (or a fan) sees the truth rather than a mint-day estimate that may no longer hold.
+
+The keep-alive reserve floor is **dynamic and protective**: when realized yield falls or storage prices rise, the floor rises to keep the character covered, and it never auto-lowers below the hard contract minimum and never auto-withdraws. Sizing always uses the net-of-fee yield rate, so the required principal is stated honestly (higher) rather than optimistically. This makes permanence a property the character continuously measures and defends, not a claim frozen at creation.
+
+**Monitored daily, adjusted asymmetrically.** The measurement runs every day, not once per storage period, because reacting late to a yield decline is expensive: yield is time-based, so each day spent under-committed at a falling rate is a shortfall that compounds and cannot be recovered later. The adjustment is therefore deliberately asymmetric, tighten fast, loosen slow:
+
+- **Yield falling: raise the minimum stake immediately, daily, and get ahead of it.** The day observed yield drops, the required minimum stake rises to the new (higher) level plus a small extra downturn margin, so the character stays ahead of the trend rather than merely keeping pace. The trigger is a leading signal, the yield currently on offer, not only what was last earned, so the floor rises the day a venue cuts its rate, before the shortfall shows up in realized returns. Because the cost of reacting late compounds, the safe bias is to over-correct slightly on the downside.
+- **Yield rising: do not loosen right away.** A yield improvement does not lower the minimum stake until two conditions both hold: the current storage period (paid roughly half a year at a time) is fully prepaid, and the improvement has persisted for a set window rather than being a single-day spike. Only then may the requirement ease down, and never below the hard minimum. This prevents banking a temporary spike as if it were permanent and freeing principal that a reversion would immediately demand back.
+
+The two cases in one line: the survival floor ratchets up quickly when conditions worsen and eases down only slowly and only once survival for the paid period is already locked in. Surplus routing (§10.3) keys off the conservative, un-loosened requirement, so a yield spike never prematurely diverts surplus away from safety and into interaction. The daily health signal reports which state the character is in: tightening, holding, or eligible to ease.
+
+### 10.5c The Budget in Every Condition
+
+The budgeting rules above resolve to one behavior per situation. What follows is the same waterfall seen from each state a character can be in, so the design is legible end to end. Survival is always funded before interaction, and the character defends its own life automatically as conditions change.
+
+- **Newly funded.** The buffer is filled first, the rest is staked. If principal is already comfortably safe, surplus funds interaction; if it is above the sustaining level but not yet safe, surplus compounds to build margin; if it is below the sustaining level, the character is flagged "needs top-up" and interaction gets nothing until survival is secure.
+- **Healthy and quiet.** Yield covers survival with room to spare; because the character is comfortably safe, surplus yield flows to interaction. It stays alive indefinitely and can afford to talk.
+- **Yield drops.** The principal needed to cover survival rises, so more of the corpus is automatically committed to survival and the protective floor rises with it. Interaction is squeezed first: the character talks less, or not at all, but stays alive. If the drop pushes it below the safe level, surplus stops going to interaction and compounds to rebuild margin instead.
+- **Building margin.** Survival is covered but the character is not yet comfortably safe, so surplus compounds into principal until it reaches the safe level, then begins funding interaction.
+- **Shortfall.** Yield alone can no longer cover survival, so the character draws down principal to stay alive, never below the hard minimum, prioritizing keep-alive then storage, with nothing for interaction. It consumes itself slowly to survive, which is correct: dormant-but-recoverable beats dead. The health report shows the runway and asks for a top-up.
+- **Popular.** Earned income arrives on top of yield and typically exceeds the survival burn, so principal grows, the character moves past the safe level quickly, and surplus funds interaction. Being valued makes a character more permanent, not less.
+- **Heavier over time.** As a character accumulates more memory or media, its storage cost rises, so its survival requirement rises too; the per-epoch recompute catches this automatically, treating a heavier character like a mild yield drop. Falling storage prices work the other way.
+- **Deep dormancy.** If buffer, yield, and drawdown are all exhausted to the hard minimum, the character goes dormant: the object, its committed identity, and its already-paid storage remain, and any top-up revives it. Only prolonged total neglect, storage actually lapsing, is true loss, which the floor and funding-first ordering are built to prevent.
 
 Who may interact with a character, and on what terms, is set by the owner through two independent settings. They are orthogonal, and any combination is valid.
 
@@ -659,6 +746,9 @@ Compute is covered before anything lands, so the endowment never fills with mone
 - **Default:** a reserve sized to keep the character alive for a meaningful horizon, on the conservative adverse-yield sizing of §29. A creator who changes nothing gets a character that survives by default.
 - **Raise it freely:** more reserve, more permanence, less withdrawable now.
 - **Lower it, but only to a hard contract minimum:** the minimum funds the keep-alive allocation itself (the character existing and being ownable). The contract refuses any withdrawal that would cross it. A creator can choose more safety; a creator can never guarantee the character's death by cashing out.
+- **Never against unspent fan credits.** The reserve floor also rises to cover the character's outstanding unspent-credit liability: money fans have prepaid for interaction they have not yet consumed is theirs until spent, kept liquid, ring-fenced, and never withdrawable, unstakeable, or spent on the character's own survival by the creator. Only funds the character has actually earned by delivering interaction pay for auto-staking, keep-alive, and storage renewal; unspent credits sit protected and refundable and are excluded from the principal that measures whether the character is safe enough to fund interaction. The creator withdraws only what has actually been earned by delivery, plus surplus above both the keep-alive minimum and the unspent-credit liability. As fans spend their credits (interactions happen), that liability converts to earned revenue and becomes spendable and withdrawable; unspent credits stay refundable to the fan. This is the fan-protection guarantee: a creator can never cash out, nor spend on the character's own upkeep, money owed for undelivered interaction.
+
+**Refunds (defined mechanism, not required for launch).** A fan's unspent credits can be returned, and because the liability is kept liquid and ring-fenced, the funds to honor a refund are always present. The refundable amount is the current unspent liability, which already nets out the up-front fee (taken on the way in and not refunded) and is already reduced by whatever the fan has used. The service markup needs no separate refund calculation: it is realized only when a credit is spent at delivery, so an unspent credit carries no markup to unwind, and partial usage is already reflected in the liability figure. Returning money costs money, so the refund is net of its own cost: the transaction gas, plus any bridge cost when the refund goes back to the wallet and chain the fan paid from. This is the same at-cost, self-reimbursing pattern as cross-chain sweeping (invariant 57): a refund is a sweep pointed at the fan's wallet, run as one atomic sponsored transaction whose gas is repaid from the moved funds. As with sweeps, a refund fires only when the balance exceeds a safety multiple of that fully-loaded cost, so a refund never costs more than it returns; a tiny cross-chain balance is instead offered on the home chain or left in place (credits never expire). Refunds are a defined capability; a specific fan-initiated or automatic refund flow is a product choice layered on top, and any handling of long-dormant balances is subject to legal review (stored-value and unclaimed-property rules).
 - **All public on-chain:** anyone can read a character's reserve setting and its runway. Transparency becomes a signal ("set to survive 40 years" versus "bare minimum"), not merely compliance.
 
 The hard minimum is the one place sovereignty yields to the thesis: everything about the reserve flexes except the ability to zero it, because "Beings That Live Forever" must be a contract-enforced property, not a vibe the owner can revoke.
@@ -687,7 +777,7 @@ Compute-covered-first (§10.7) holds throughout: a metered modality settles its 
 
 **The two layers, restated.** Under the hood, exact and on-chain: the usage record and its settled cost. On the surface, what humans see: dollars, credits, and plain-English allowances. The meter is precise; the presentation is simple.
 
-**What the creator sets, per modality.** An on/off toggle, which is the primary economic control, since off means zero exposure to that cost class. A markup, in dollars or credits, with a contract floor at true cost plus the routing fee, so a creator can never accidentally price below cost. And optional caps on the expensive axes (maximum resolution, maximum clip length, maximum videos per fan per day) to bound the worst case. The mental model stays simple: text is nearly free to the creator, images cost a little, voice and video cost more, so the expensive modes go on the paid tier, priced to profit.
+**What the creator sets.** An on/off toggle per modality, which is the primary economic control, since off means zero exposure to that cost class. A single markup multiple that applies across all modalities, with a contract floor so a creator can never price below true cost, and the fee guardrail so a thin margin never pushes the creator negative. And optional caps on the expensive axes (maximum resolution, maximum clip length, maximum videos per fan per day) to bound the worst case. The mental model stays simple: one markup, and the meter scales the absolute price with each modality's real cost, so text is nearly free to the creator, images cost a little, voice and video cost more, all at the same multiple. Per-modality pricing is a later refinement, not a launch requirement.
 
 **Two pricing surfaces bridge dollars to the meter:**
 
@@ -716,20 +806,53 @@ Because the whitelist is on-chain: it is contract-enforced (a manager's out-of-s
 
 **The security line, stated as a rule.** A management right is a signed, on-chain capability bound to a specific wallet. An interaction gate (password/payment) is a serving-layer permission. A password can never grant management, and a whitelisted manager's power is bounded by its granted scope and can never reach root actions without the owner's root signature. Three layers, each enforced at the right place: serving layer for interaction, contract for management and root.
 
+**Inviting a manager by email.** Because a whitelist entry is wallet-bound, someone can only be added once they have a wallet. Managers can still be invited by email as a convenience: the owner picks the intended scope and sends an invite, which holds that scope as a pending invitation until the invitee accepts. On acceptance the invitee is onboarded and given a non-custodial wallet the same way any user is (§9), and only then is the wallet-bound whitelist entry created, with the owner's root authority, so the on-chain model is unchanged (a manager is always an address, granted by the owner). The pending invitation carries no authority and grants nothing until it resolves to a real wallet-bound entry; an unaccepted or expired invite is simply discarded. The invite is a bridge to the existing grant, not a new kind of authority.
+
 ### 10.10 How the Protocol Sustains Itself
 
-The standard charges nothing to exist, run, or be owned, and every default below is overridable, so a fully self-provisioning owner pays nothing. What the protocol does provide is a service worth paying for: XEL auto-routes each capability to the best available provider (decentralized storage and threshold encryption, attested compute, a diversified yield basket for treasury, and the like), handles renewals and failover, and upgrades these defaults over time as better providers emerge, all without the character's identity or funds ever moving. A disclosed fee, targeting roughly 10%, is charged for this routing and upkeep. It maps onto the allocations distinctly:
+The standard charges nothing to exist, run, or be owned, and every default below is overridable, so a fully self-provisioning owner pays nothing. What the protocol does provide is a service worth paying for: XEL auto-routes each capability to the best available provider (decentralized storage and threshold encryption, attested compute, a diversified yield basket for treasury, and the like), handles renewals and failover, and upgrades these defaults over time as better providers emerge, all without the character's identity or funds ever moving. A disclosed protocol fee is charged for this routing and upkeep (the fee rate is defined in Appendix E). It maps onto the allocations distinctly:
 
 - **Keep-alive allocation:** routed at cost, no fee. The protocol never profits on keeping a character alive.
 - **Storage allocation:** a routing fee on discretionary storage above the core (video, images, extra hosting), applied at write and at renewal, never on the keep-alive core.
 - **Interaction allocation:** interaction is sold as prepaid credits, so payment is collected up front at purchase; the fee is included in the credit price, and the underlying compute is routed to the best inference provider.
 - **Endowment principal:** a fee on yield only, never on principal, so the protocol earns only when the character's own fund earns.
+- **Tips and donations:** value a fan gives directly (a tip, or a donation to the endowment) is an inflow like any other and carries the same fee on the way in.
 
-Every fee is taken at a moment value moves or grows (a credit purchase, a storage renewal, a yield epoch), never as a toll on permission, never on principal, and never on keep-alive. A self-hosting owner who routes their own providers pays none of it.
+**The fee model in one rule: the protocol fee is taken on the way in, nothing on the way out.** The fee is taken once, at the moment value enters the character, and never when value leaves or is spent.
+
+- **Feed (inflows), once, on arrival:** interaction payments (at credit purchase), yield (each epoch as it is earned on the staked principal), and tips or donations (on receipt). Yield is an inflow, value the staked principal earns, so it is taxed on arrival exactly like interaction revenue, not on the way out.
+- **Never feed (outflows and survival):** paying the character's own bills, unstaking to cover those bills, the creator withdrawing surplus, refunding a fan's unspent credits, the character's principal itself, and anything in the keep-alive path. A creator withdrawing already-net funds pays nothing, and a creator's own deposited capital comes back out fee-free.
+
+This is what keeps the creator promise literally true ("the protocol fee is taken once, the AI cost is covered, you keep the rest"): the cut is taken once when money comes in, so withdrawing your own money is never a fee event, and the protocol never double-charges a dollar it already took a cut of. A self-hosting owner who routes their own providers pays none of it. The fee rate itself is defined in Appendix E.
+
+### 10.11 Character Settings: What an Owner Controls, and Where It Lives
+
+Everything an owner configures about a character falls into one of three homes, and which home a setting lives in is not a UI detail: it determines who can read it, who can change it, whether it survives the operator, and whether it needs encryption. The recurring mistake is to treat "a setting" as one kind of thing; it is three. The rule that sorts them: **public policy and money live on-chain; private content lives encrypted; interaction preferences live at the serving layer.**
+
+**The three homes.**
+
+- **On-chain state (public, contract-enforced, survives everyone).** Identity labels, authority, money, and policy. These are meant to be publicly auditable and must run without any operator, so they are on-chain object state: handle, display name, links, and the on-chain identity; owner, managers and their scopes, guardians, the agent capability; all treasury and funding state (deposit topology, allocations, reserve, spend caps, pause, stake/withdraw, yield envelope); pricing and earnings policy; provider policy; transfer, wind-down, and succession; and the commitments and provenance that anchor memory and persona. A visitor or auditor being able to read any of these is fine or desirable, which is the test for on-chain.
+- **Encrypted content (private, threshold-gated, decrypted only in the enclave or client).** The actual private material: persona, memory, raw substrate, and voice samples and the cloned voice model. These are encrypted and released only to owner-or-guardians through the on-chain access policy. This is the only home that uses the read-time decryption layer, and it holds content, never policy, pricing, or authority.
+- **Serving-layer config (interaction preferences, enforced where interaction happens).** Discoverability, passwords, payment gates, modality on/off toggles, and reach gates. These decide whether and how the character talks to a given visitor. They are not the cryptographic wall and never grant decryption: a password controls what surfaces in conversation, not what can be decrypted.
+
+**What each setting is, and its status.** The settings map onto the three homes as follows. Most are already defined; a few are deliberately marked as still-open or as launch-versus-target, rather than presented as settled.
+
+- **Account and identity** (handle, display name, bio, avatar, links, on-chain identity): on-chain, public. Settled.
+- **Persona and memory** (persona prompt, imported sources, live-sync): encrypted content. Settled. With: versioning (on-chain commitments, persona versioned by default, memory optional) settled; permissioned contributions (on-chain reviewed queue) settled; consent (on-chain artifact) settled; crypto-shred deletion (destroy the encryption key) settled.
+- **Memory tiers / media privacy:** launch is serving-layer gating under a single encryption policy (the serving layer decides what surfaces per tier). The target for private or preserved-person characters is per-tier encryption, where each tier is released under its own policy so a lower-tier session cannot decrypt higher-tier memory at all. This is the one item deliberately staged: cryptographic tier separation is the destination, serving-layer separation is the launch state, and the difference is disclosed rather than hidden.
+- **Per-fan memory scope:** conversational memory with a specific fan is scoped to that relationship by default (fan A's private conversation does not surface to fan B); a shared, communal memory is an explicit owner opt-in. The character's identity (persona, substrate, distilled knowledge) is always global; only conversational history is scoped. Settled as the default.
+- **People and access** (owner, managers and scope, reach gate, operator capability, guardians): on-chain, public policy. Settled. Managers are on-chain whitelist entries, never encrypted, and being a manager does not grant decryption.
+- **Funding and treasury** (deposits, budget states, itemized bill, stake/unstake/withdraw, yield status, yield risk envelope, spend caps, pause): on-chain. Settled.
+- **Earnings and pricing** (charge toggle, markup, per-modality price, take-home preview, metering, fan credits, refund): on-chain economic state plus serving-layer price display. Settled.
+- **Privacy and gates** (discoverable, password, payment gate, modality toggles, scoped passwords): serving-layer. Settled. Scoped passwords gate interaction only, never decryption.
+- **Voice** (message on/off, real-time call on/off, the voice reference, and cloning): the toggles are serving-layer; the voice model reference is on-chain like other pointers; the voice samples and cloned model are encrypted content; and cloning itself is a consent-gated, owner-root capability (it requires a consent artifact scoping voice and fails closed without it, §11). Settled.
+- **Ownership and wind-down** (transfer, wind-down, succession, provider policy): on-chain. Settled. Succession is guardian-driven (M-of-N); an optional designated-heir field is an owner-set hint that guardians honor, with authority remaining M-of-N. Provider policy is on-chain public routing policy, not encrypted.
+
+**Why the split matters, in one line.** Put a pricing toggle or a manager entry behind encryption and you have made public policy unauditable and operator-dependent; put a voice sample or private memory on-chain and you have leaked it to the world. The homes are chosen so that authority and money are always verifiable and survivable, private content is always protected, and interaction preferences stay flexible where they belong.
 
 ## 11. Capabilities & Providers
 
-The standard is a versioned library of capability schemas, one canonical input/output contract per capability (`inference.v1`, `ingestion.v1`, `retrieval.v1`, `treasury.v1`, and the generation schemas `voice.v1`, `image.v1`, `video.v1`). The schema is what makes vendors interchangeable: any provider implementing it behind a standard payment endpoint is a drop-in for any other.
+The standard is a versioned library of capability schemas, one canonical input/output contract per capability (`inference.v1`, `ingestion.v1`, `retrieval.v1`, `treasury.v1`, the consent-gated `voice_clone.v1`, and the generation schemas `voice.v1`, `image.v1`, `video.v1`). The schema is what makes vendors interchangeable: any provider implementing it behind a standard payment endpoint is a drop-in for any other.
 
 **Flow.** The character's client takes a capability and its schema, finds a provider, sends the standard request, pays per call in crypto, gets the standard response, and processes it.
 
@@ -745,7 +868,7 @@ The standard is a versioned library of capability schemas, one canonical input/o
 
 **Ingestion handles untrusted input and off-chain credentials.** Content is treated as untrusted (quarantined, moderated, provenance-stamped, rollback-able through persona versioning), because a poisoned document or caption is a prime injection vector (§34).
 
-**Retrieval is a layered hybrid, and the orchestrator is a provider.** Recall combines meaning search, exact-term search, temporal filtering, a relationship graph, and re-ranking (§32). The control loop that runs ingestion and recall is the orchestrator: off-chain, open-source, offered as a provider capability. It sees decrypted memory only transiently and only inside attested compute or on a self-custody client.
+**Retrieval is a layered hybrid, and the orchestrator is a provider.** Recall combines meaning search, exact-term search, temporal filtering, a relationship graph, and re-ranking (§32). The control loop that runs ingestion and recall is the orchestrator: off-chain, open-source, offered as a provider capability. It sees decrypted memory only transiently and only inside attested compute or on a self-custody client. Because the search cannot run on-chain (consensus cannot execute these algorithms or operate over ciphertext), it runs in the attested-compute slot with key release gated by the on-chain access policy, and every recall carries an attestation the chain verifies against the memory-root, so a swapped or tampered retrieval provider is detectable rather than trusted (§32.5).
 
 **Compute, relay, and attested inference.** The relay moves end-to-end-encrypted data and is a pluggable multi-provider slot. The attested-compute slot is where sensitive work happens (decrypting memory, running inference); any provider filling it must accept crypto payments, be permissionlessly joinable, and produce an on-chain-verifiable attestation binding its output to the persona-hash and input, so a swapped or tampered brain is detectable and, with bonds, slashable. The long-term successor is ZKML.
 
@@ -755,7 +878,7 @@ The standard is a versioned library of capability schemas, one canonical input/o
 
 Minting is not a call to GEN. It's a public mint function in the open-source aNFT package deployed on-chain. Once deployed, minting is an ordinary on-chain transaction anyone can submit from any client, script, or explorer, and GEN can't gate it.
 
-The minting UI is just the easiest place to do it, not a toll booth. Value capture is never a fee for on-chain permission (the standard needs no paid intermediary). The protocol earns only by routing each capability to the best provider and keeping those defaults current, for a disclosed fee on routed work and on yield (§10.10), never on principal or keep-alive, and always avoidable by self-provisioning.
+The minting UI is just the easiest place to do it, not a toll booth. Value capture is never a fee for on-chain permission (the standard needs no paid intermediary). The protocol earns only by routing each capability to the best provider and keeping those defaults current, for a disclosed protocol fee on routed work and on yield (§10.10, rate in Appendix E), never on principal or keep-alive, and always avoidable by self-provisioning.
 
 ## 13. Lifecycle & Succession
 
@@ -769,6 +892,17 @@ Succession is a primary feature, not an edge case. The guardian set (§9) is the
 - the existing agent capability keeps the character alive through the transition with no downtime.
 
 Wallets, endowment, allocations, the manager whitelist, provider policy, and commitment history all transfer as a unit, because they're properties of the on-chain object. Heirs inherit an income-bearing, self-operating estate, and can keep or clear the manager whitelist.
+
+### 13.1 Transferability: why the character is an owned object
+
+A character must be sellable and inheritable, so the character object is an **owned** object: it is held in a wallet, and ownership is the fact of holding it. Selling or bequeathing a character is a transfer of that object to a new wallet, paired with the mandatory key rotation on transfer (invariant 26) so the new owner gains fresh control and the prior owner is cleanly cut off with nothing left behind. This is what makes a character a real, tradeable asset that can outlive its creator and change hands forever.
+
+This is a place where the two natural object models pull in opposite directions, and the design deliberately splits them rather than compromising either:
+
+- The **character** is owned, because owned objects are the transferable, sellable kind: a wallet holds the object, and moving it to another wallet is the sale. This gives clean, native transfer and the sovereignty property (control moves completely with the object).
+- The **endowment** is a shared object, because the always-on machinery (the permissionless heartbeat, keepers, sweeps) must be able to obtain a mutable reference inside anyone's transaction to keep the character alive without the owner present. A shared object allows that; an owned one does not.
+
+Keeping these separate is what lets a character be *both* freely transferable *and* continuously self-operating. The tempting shortcut, making the character itself a shared object so that autonomous services can touch it directly, is a mistake: a shared object is not held by any wallet, so it has no native transfer path, and a character minted that way cannot be sold or inherited. The always-on behavior that shortcut is reaching for is already provided by the shared endowment sitting alongside the owned character, plus the agent capability, so there is never a reason to make the character shared. A character is always minted as an owned object; minting a character as a shared object is unsupported and strands its transferability.
 
 ## 14. IP, Licensing & Rights: Lineage (Future Direction)
 
@@ -870,7 +1004,7 @@ Part I is the vision and the architecture. Part II is the formal specification: 
 - **crypto-shredding:** honoring deletion by destroying the decryption key, not the data.
 - **provider_policy:** the on-chain field listing pinned providers per capability.
 - **manager whitelist:** on-chain list of wallet addresses granted scoped, non-root management rights over a character.
-- **primary (home) chain:** the single chain where a character's principal concentrates and earns yield. Default Sui. Owner-chosen.
+- **primary (home) chain:** the single chain where a character's principal concentrates and earns yield. Owner-chosen; the default is named in Appendix E and its rationale is in §5.2.
 - **programmable execution:** the account can run any transaction the signer hands it; bounded by policy under the agent capability, open under owner signature.
 - **sweep:** auto-consolidation of a receive-only balance to the primary wallet once it crosses an owner-set threshold.
 - **oracle:** a price feed used to value assets in one unit and enforce USD-denominated caps and runway.
@@ -1028,7 +1162,7 @@ Then it returns an authorization the client turns into a crypto payment.
 41. **Allocation isolation.** Each allocation spends only its own balance. No function moves funds between allocations except the epoch metering allocator, which only ever flows net yield inward, never sideways.
 42. **Keep-alive is never marked up.** A fee may apply to interaction and to yield, but the keep-alive allocation is always funded at cost.
 43. **Compute-covered-first.** On any paid interaction, the metered compute cost settles before the routing fee is taken and before any funds land in the endowment; a withdrawal can never strand a compute obligation.
-44. **Fees are disclosed on-chain** and charged only on routed work and on yield (interaction credits, discretionary storage, yield), never for on-chain permission, never on principal, never on keep-alive, and are zero for a self-provisioning owner.
+44. **Fees are disclosed on-chain and taken only on the way in.** The fee is charged only on inflows, when value enters the character (interaction credits at purchase, discretionary storage at write/renewal, yield as it is earned, and tips or donations on receipt), never on outflows (paying bills, unstaking to cover them, creator withdrawals, credit refunds), never for on-chain permission, never on principal, never on keep-alive, and zero for a self-provisioning owner. The cut is taken once on arrival, so already-net funds are never re-charged on withdrawal.
 45. **The keep-alive reserve floor is contract-enforced.** The owner sets a withdrawable reserve; the contract refuses any withdrawal that would cross the hard minimum funding keep-alive. The reserve is raisable freely, lowerable only to that minimum, never to zero.
 46. **The heartbeat is authority-free.** The epoch-trigger function carries no authority: it cannot move funds between allocations, change rates, or take anything beyond a fixed, contract-defined bounty; if the epoch has not elapsed it is a no-op.
 47. **Yield rebalancing is envelope-bounded.** A delegated rebalance executes only within the owner-set risk envelope (venue allowlist, per-venue caps, slippage bound, allowlisted routing); anything outside it, and any principal exit or bridge, is owner-signed. Principal never leaves the character's own wallet without an owner signature.
@@ -1040,6 +1174,15 @@ Then it returns an authorization the client turns into a crypto payment.
 53. **Sweep is inbound-only and bounded.** Auto-sweep may consolidate a receive-only wallet into the primary above an owner-set threshold and within a per-bridge cap; bridging principal outbound or any external withdrawal is owner-signed only and never delegable. Exactly one primary wallet exists at all times.
 54. **No stored key controls principal.** Principal on the home chain is object-owned (no key exists); principal on other chains is controlled by an MPC network that never assembles the key. No decryptable blob anywhere grants spending authority over principal, so no single off-chain party can reconstruct a key that moves it, and a contract can never see or hold such a key. Encrypted secrets hold only readable material (the memory/persona key and creator-provided credentials), never a wallet's spending key.
 55. **Operator-held credentials are harmless to the character.** Any key or account an operator holds to reach a key-based provider is convenience infrastructure only. It can never move the endowment, decrypt memory or persona, or seize or transfer the character. Payment method is a provider property (crypto-native pay-per-call preferred; key-based accepted as a swappable bridge held at the operator layer), and no operator-held credential is ever attached to the character or placed in its encrypted secrets.
+56. **Unspent fan credits are protected.** Prepaid interaction credits are the fan's until spent: they are held as a ring-fenced unearned liability, kept liquid and refundable rather than put at survival risk. No creator withdrawal or unstake, and no survival-driven spending (keep-alive, storage renewal, auto-staking), may reduce the endowment below the outstanding unspent-credit liability, which sits on top of the keep-alive reserve as a second protected floor; and the liability is excluded from the character's own principal when measuring whether it is safe enough to route surplus to interaction, so fan money never makes a character look safer than it is. Only earned funds (credit converted to revenue on delivery, compute-covered-first) fund survival, staking, and payouts. A refund returns the current unspent liability (already reduced by whatever has been used), net of the cost of returning it (gas, and any bridge cost if refunding to another chain); the up-front fee is not refunded, as it was taken on the way in (invariant 44). Credits never expire: an unused balance stays the fan's indefinitely. On any paid interaction the fee never exceeds the post-compute margin, so covering compute and honoring fan credits always take precedence over both the fee and any payout.
+57. **Gas sponsorship is per-chain, native, atomic, bundled, and reimbursed in the same gas token.** A receive-only wallet that holds only stablecoin and no native gas is swept using the receive chain's own native gas abstraction (the concrete per-chain mechanisms are in Appendix E). Everything a character needs on a chain in a cycle is done in one bundled atomic transaction, with exactly one stablecoin-to-native swap sized to the whole bundle's gas and one repayment to the sponsor, so the swap and repayment are once per chain per cycle, not once per action. The sponsor is repaid in the same native gas token it spent, so its gas balance is left exactly whole and it can keep sponsoring indefinitely; it never accumulates stablecoin it cannot spend on gas, and carries no per-action tab or settle loop. Because the swap, the repayment, and every action share one transaction, the sponsor pays gas exactly once and there is no separate reimbursement transaction to need its own gas (no recursion), and atomicity makes action-without-repay and repay-without-action both impossible. The repayment covers the whole transaction's native gas plus a small bounded buffer, so the sponsor is always at least whole and the buffer can never become a markup. On the primary chain the character's own operations (renewal, staking, swapping, the heartbeat) are that one bundled transaction; on some secondary chains the gas abstraction stays gas-whole internally with no explicit swap. The character holds no native-gas float; ongoing-operation gas is reimbursed from the endowment at cost, while onboarding gas (such as minting) may be an operator subsidy. Sweeps run only above a safety multiple of the fully-loaded cost (dust waits), the sponsor is a swappable, non-load-bearing slot, and the operation is fail-closed: on any failure nothing moves, no partial action and no unreimbursed gas.
+58. **Survival funds are held in a stable denomination.** Principal and its yield backing the keep-alive path are held in a stable, bill-matching denomination, never a volatile asset, and in a venue whose withdrawal is fast enough to meet a renewal deadline. A higher-variance strategy is permitted only as an explicit owner choice for surplus above the reserve, never for the survival path.
+59. **Storage is renewed before it lapses.** For a funded character, the loop reads each stored piece's remaining runway and extends it before a safety margin is crossed, so storage never expires while the endowment can cover it. Renewal fires ahead of the deadline with slack, so a single missed or failed cycle cannot cause a lapse.
+60. **The survival loop is self-funding and at cost.** Each cycle sources its own transaction-fee and bill-payment currencies just-in-time from the character's own funds, holds no meaningful working balance between cycles, never requires an external subsidy, and never breaches the keep-alive reserve. No fee is taken on renewal itself; the only economic take in the loop is the disclosed fee on yield, applied once as yield is harvested.
+61. **The keep-alive reserve is dynamic and protective.** The reserve floor and the required-to-persist figure are recomputed each cycle from realized net-of-fee yield and current storage price; the floor rises to protect survival when conditions worsen, never auto-lowers below the hard minimum, and never auto-withdraws. Sizing always uses net-of-fee yield.
+62. **Survival requirement ratchets up fast, down slow.** The survival requirement is monitored daily and adjusted asymmetrically. When observed yield falls or storage cost rises, the minimum stake rises immediately (with a small downturn margin) to get ahead of the trend, triggered by the yield currently on offer (a leading signal) rather than only what was last earned, because yield is time-based and a late reaction compounds. When yield improves, the minimum stake does not ease down until both the current storage period is fully prepaid and the improvement has persisted for a defined window, and never below the hard minimum. Realized yield drives the honest health report; surplus routing keys off the conservative, un-loosened requirement, so a transient yield spike never prematurely diverts funds from survival to interaction.
+63. **Every state change is transparent and auditable on-chain.** Each function that changes a character's state (funds, authority, managers, policy, pricing, providers, pause, identity commitments, and every cross-chain money movement) emits an on-chain event keyed by the character's identity. This includes internal movements of funds within the endowment: yield routed across the ring-fenced allocations, buffer top-ups, just-in-time unstaking, each bill paid from its own allocation, surplus compounding into principal, and the keeper bounty, so the survival waterfall is fully visible rather than a black box. Nothing that alters the character happens silently. Because the trail is on-chain and not a private log, a complete, verifiable history of a character, every change, transaction, internal flow, and status, is reconstructable by anyone from chain data alone, and it survives the operator. This is what makes the public history and provenance page a true mirror of on-chain reality rather than an operator's account of it.
+64. **The character is an owned object; the endowment is shared.** A character is always minted as an owned object so it is transferable and sellable (transfer moves the object to a new wallet, with mandatory key rotation, invariant 26). The endowment is a shared object so the permissionless heartbeat and keepers can obtain a mutable reference in anyone's transaction and keep the character alive without the owner present. Minting a character as a shared object is unsupported: a shared object has no native transfer path, so it cannot be sold or inherited. Autonomous operation is provided by the shared endowment and the agent capability, never by making the character itself shared.
 
 ## 26. Formal Model and Notation
 
@@ -1127,7 +1270,7 @@ input: C, treasury policy P
 
 **Algorithm 5: Endowment Waterfall (per epoch).**
 ```
-input: C, principal E, net yield rate r, elapsed Δt, lane rates (m1=1.05, m2=1.40, m3), skim S=0.10
+input: C, principal E, net yield rate r, elapsed Δt, lane rates (m1=1.05, m2=1.40, m3), protocol fee rate S (see Appendix E)
 1  Y  ← E · r · Δt
 2  Ŷ  ← Y − S·Y                                       # protocol yield-skim
 3  L1 ← keep_alive_cost · m1                          # lane 1: at cost + volatility buffer
@@ -1144,13 +1287,17 @@ input: C, principal E, net yield rate r, elapsed Δt, lane rates (m1=1.05, m2=1.
 input: fan payment P (prepaid, e.g. credits), measured compute cost c, routing fee rate f
 1  compute ← c                                       # true provider cost
 2  cover compute first: settle `compute` to the routed serving provider
-3  fee ← f · (P − compute)                            # routing fee on the remainder
-4  assert P − compute ≥ 0                             # else reject or reprice (invariant 43)
-5  net ← P − compute − fee
-6  add to E / interaction allocation: net            # everything left flows to the endowment
-7  settle inbound payment to C.wallet                 # invariant 39
+3  margin ← P − compute                               # what is left after the real cost
+4  assert margin ≥ 0                                   # compute is always covered; else reject/reprice (inv 43)
+5  fee ← min(f · P, margin)                            # protocol fee on gross, capped so it never exceeds margin:
+                                                       #   fee yields first, creator never pushed negative
+6  net ← margin − fee                                  # the creator's earned share (≥ 0)
+7  add to E / interaction allocation: net              # net flows to the character's endowment
+8  move this spend from the fan's unearned-credit liability to earned    # invariants 39, 56
 ```
 The creator does not receive a separate payout here: all `net` accrues to the character's own endowment, which the creator owns and withdraws from above the keep-alive reserve (§10.7).
+
+The headline stays simple ("the protocol fee is taken once, the AI cost is covered, you keep the rest"), and the `min` in step 5 is the invisible guardrail: on a healthy interaction the fee is a clean protocol-fee share of what the fan paid, and on a thin-margin one the fee shrinks so the compute bill is still paid and the creator's share never drops below zero. The fee rate (`f`, `S`) is defined in Appendix E. One markup multiple, set by the creator, applies uniformly across text, voice, image, and video; the usage meter scales the absolute price with each modality's real cost, so a single multiple produces sensible prices everywhere without per-modality tuning. What the fan pays shows as credits; what the creator keeps shows as a live take-home preview, so the creator never does the math.
 
 ## 29. Economic Model
 
@@ -1167,6 +1314,8 @@ Let `P` be endowment principal, `r` the net yield rate per period (after fees an
 **A worked example (illustrative, conservative).** Numbers are for intuition, not a promise; all inputs vary. Take a quiet character, one nobody is paying to talk to, so `Ê = 0` and it must live on yield alone. Suppose its recurring burn `B` is dominated by encrypted storage of its substrate plus core hosting and the heartbeat's gas and bounty. On decentralized storage a few gigabytes of persona and memory, renewed, plus site hosting and a daily heartbeat, is on the order of a few dollars to low tens of dollars a year; call it $20/year to be safe. To cover $20/year from yield alone at a deliberately conservative 4% net (well below headline stablecoin rates, to respect the adverse-yield rule), the endowment needs `P = B / r = 20 / 0.04 = $500`. At that point the character is self-sustaining indefinitely with no one paying attention: yield covers keep-alive, and it never touches principal. If net yield falls to 2%, the same $20/year needs ~$1,000; if it goes to zero for a stretch, a $500 endowment drawing down only its keep-alive burn still funds ~25 years before reaching a floor, during which any top-up or a single paid period resets the clock. Now add even light popularity: at, say, $8/month of paid interaction with compute covered first (§10.7), `Ê` swamps a $20/year burn, principal *grows*, and the endowment compounds rather than depletes. The takeaway the math encodes: a modest one-time endowment makes "quiet forever" real, and any real usage makes it a growing fund, not a shrinking one.
 
 **Economic honesty (the stress case).** The model is not a guarantee. `r` is stochastic and can be zero or negative for extended periods: the headline yield venues are funding-rate trades that invert in bad regimes, so real risk-adjusted yield over long horizons may be near zero. `B` grows with usage and model cost. The treasury policy bounds the variance in `r` but cannot remove it. Sizing should therefore assume an adverse-yield scenario, not a favorable one. This is a documented trust assumption, and a yield-source diversification path (staking + lending + synthetic-dollar mix) is the mitigation so the endowment is never single-sourced.
+
+**Continuously remeasured, not fixed at mint.** Because both `r` and `B` drift over time (yield rates move; storage prices historically fall), the required principal `P = B / r` is recomputed every cycle from the *realized* net-of-fee yield and the *current* storage price, using `r` net of the disclosed yield fee so the figure is honest rather than optimistic (invariant 61). The character publishes the result as a health signal, self-sustaining, or short by a stated amount, and its keep-alive reserve floor rises protectively when conditions worsen. So "forever" is a property the character continuously verifies against live conditions, not a one-time estimate that silently goes stale.
 
 **Graceful degradation: pause, not death.** When total income cannot cover burn, the character does not die. It degrades: first drawing principal to the floor, then reducing activity, then going dormant (self-preserved, not answering) until refunded or re-engaged. The only truly terminal failure is sustained underfunding of the substrate storage itself (the raw-data-root material), because that is the one thing that cannot be regenerated. So "forever" honestly means self-sustaining when funded or popular, dormant-but-recoverable when neither, and lost only if the substrate goes unfunded long enough to be dropped. This is design guidance, not investment advice.
 
@@ -1210,9 +1359,9 @@ any        → archival   : owner/heir election ∨ underfunding beyond retentio
 
 **32.4 The orchestrator.** The storage and retrieval components are commodity slots; the control loop that runs ingestion and recall, enforcing encryption, provenance, and on-chain commitment, is the orchestrator, offered as a provider capability, hostable by XEL, another provider, or the user.
 
-**32.5 Verifiable recall.** Because memory is a slot with on-chain commitments, recall is verifiable against the memory-root.
+**32.5 Verifiable recall.** Because memory is a slot with on-chain commitments, recall is verifiable against the memory-root. The retrieval compute (meaning search, exact-term search, temporal filtering, graph traversal, re-ranking) cannot run on-chain: consensus can neither execute these algorithms nor operate over ciphertext. So it runs in the attested-compute slot and proves itself instead. The flow: the threshold policy releases the decryption key into the enclave only if the on-chain access policy is satisfied; the enclave decrypts the relevant memory, runs the hybrid search, and signs its result together with the memory-root it ran against; and a contract verifies that attestation on-chain and checks the memory-root matches the commitment before anything acts on the output. The result is fail-closed: a swapped, tampered, or unverifiable retrieval provider is rejected rather than trusted. This is the same threshold-encryption-plus-attested-compute pairing used for the brain: the threshold layer decides who may hold the key, the enclave computes on the decrypted data, and the chain verifies the outcome.
 
-**32.6 Operating model.** No chain runs the memory; it runs off-chain, seen decrypted only transiently inside attested compute or on a self-custody client.
+**32.6 Operating model.** No chain runs the memory; it runs off-chain in the attested-compute slot, seen decrypted only transiently inside the enclave or on a self-custody client. That slot is a first-party part of the same integrated privacy stack as the encrypted storage and the threshold-encryption policy (§11, Appendix E), not a generic external server: encrypted state lives on decentralized storage, the threshold layer gates key release by on-chain policy, the enclave does the private computation, and the chain verifies the attestation. Because the slot sits behind the retrieval schema and identity of record is the on-chain commitment, the provider and the engines inside it are swappable without data loss: a new provider rebuilds the derived layer from the committed substrate, and its attestation still binds to the same memory-root.
 
 **32.7 Substrate vs derived layer (built to outlast RAG).** Two tiers: permanent substrate (committed by raw-data-root) and regenerable derived layer. The memory method can be replaced by regenerating the derived layer from the substrate without data loss.
 
@@ -1294,25 +1443,25 @@ Acceptance: the XEL-can-die invariant passes as a CI chaos test on this minimal 
 
 ## Appendix A: The aNFT Object (Commitment-Oriented)
 
-The full Move struct definitions live in the companion build specification (`xel-build-spec.md`, §2 `identity`), which is the formal reference for all on-chain types. In summary, the aNFT is an owned object with: an immutable `Genesis` sub-object (creator, timestamp, consent reference); versioned commitment fields (`persona_hash`, `memory_root`, `raw_data_root`, `policy_hash`) with a `lineage` vector recording every authorized transition; pointers to off-chain state (`encrypted_secrets`, `substrate_blobs`, `derived_blobs`, `manifest`, `site`) and an on-chain owner-set `handle` display label; a per-chain `wallets` map with one primary; and handles to the associated `endowment`, `guardian_set`, `manager_whitelist`, and `provider_policy`, an optional `agent_cap_id`, and a `paused` flag. Genesis immutability is structural: no function anywhere takes a mutable reference to it.
+In practical terms, the aNFT is an owned object with an immutable genesis record, versioned commitments for persona and memory, pointers to encrypted off-chain state, an owner-set display handle, wallet references, and links to the endowment, guardians, managers, and provider policy. Genesis immutability is structural: the creation record is part of the object, not mutable profile text.
 
 ## Appendix B: Authority, Agent Capability, SpendPolicy, Two-Tier Entry
 
-Full definitions in the build spec (§3 `authority`, §6 `wallet`). The `AgentCapability` is a non-copyable, delegate-bound object (`key` without `store`) carrying `per_call_cap`, `daily_cap`, `per_capability_budget`, `provider_allowlist`, an `Envelope` of permitted delegated actions, and `expires_at_ms`. Owner-tier entries take a mutable reference to the aNFT (only the owner holds it); delegated entries take the capability and pass `assert_in_envelope`. A valid signature is never sufficient, the capability check is what authorizes. Root actions (withdraw principal, transfer, edit whitelist, change the envelope) accept no capability parameter anywhere, which is the enforcement. The `SpendPolicy` tracks per-period running totals and fails closed on any cap breach.
+Authority has two public principles. Root actions require the owner-held aNFT. Delegated actions require a revocable agent capability whose scope, limits, allowed providers, and expiry are checked before anything runs. A signature is never enough by itself; it must be paired with the right object and the right scope. Root actions such as withdrawing principal, transferring ownership, changing the manager set, or widening delegation are deliberately outside the delegated envelope. Spend policy is tracked against caps and fails closed when limits, recipients, providers, assets, or timing do not match the current policy.
 
 ## Appendix C: Guardian Recovery & Access Policy
 
-Full definitions in the build spec (§4 `access_control`, §5 `guardian`). The `GuardianSet` is an M-of-N set (1 ≤ M ≤ |members|). Decryption and other sharp actions are gated by an owner-OR-M-of-N `AccessApproval` token, mintable only by the owner or a verified guardian threshold. Recovery/succession runs through a `RecoveryRequest` behind a timelock and a dispute window (owner or any guardian may dispute); finalization requires the threshold, an elapsed timelock, no dispute, and mandatory key rotation (re-encryption to the heir), after which ownership transfers with no downtime because the agent capability keeps running.
+Guardian recovery uses an M-of-N set chosen by the owner. Guardians cannot operate the character day to day; they can only help recover access or execute succession under threshold approval. Recovery and succession sit behind a timelock and dispute window, then rotate encryption access to the new holder so old access is cut off cleanly. This is how the system avoids both extremes: a lost wallet should not kill a character, and no single guardian should be able to seize one.
 
 ## Appendix D: Capability Schema Examples
 
-Full request/response JSON for `inference.v1`, `ingestion.v1`, `retrieval.v1`, `treasury.v1`, `distillation.v1`, and the generation schemas `voice.v1`, `image.v1`, and `video.v1` (each with its usage-record dimensions), plus the public `mint` function and the two-phase hold/settle contract for variable-cost modalities, are in the build spec (§13 capability schemas, §8 settlement, §2 `mint`). Each schema carries the character's identity and the relevant commitment so a provider proves it ran the committed version, and every inference or generation response carries an attestation the contract verifies (fail closed). Concrete provider assignments for each schema are in Appendix E.
+Public capability families include inference, ingestion, retrieval, treasury, distillation, voice, image, and video. Each request carries the character identity and the relevant commitment so a provider can prove it used the right persona, memory, and policy. Each response that touches private reasoning or generation carries auditable metadata and, for sensitive paths, an attestation. Variable-cost modalities use quote or hold-and-settle semantics so the user sees a bounded commitment while the provider still settles actual usage. Voice cloning has a stricter consent gate and fails closed without both scoped consent and owner authorization. Concrete provider assignments for the current defaults are in Appendix E.
 
 ## Appendix E: Default Implementations (Configurable, Not Load-Bearing)
 
 These are the concrete systems currently filling each capability slot. They are implementation choices, not part of the standard: any provider meeting a slot's requirements (accept programmatic crypto payments, permissionlessly joinable, verifiable/decentralized) can replace them. This appendix is expected to change over time without altering the body of the paper.
 
-**Why Sui is the default across these slots.** Native object model (an aNFT owns its own memory, wallets, and agent capability natively). One integrated privacy stack: Walrus (encrypted storage), Seal (threshold encryption with on-chain access policy), and Nautilus (attested compute) interoperate as a native whole, and Seal's owner-OR-M-of-N gated decryption maps directly onto the key and crypto-shredding model (§9). Optional onboarding conveniences (sponsored/gasless transactions) layer on top of a self-custody root with no third-party dependency. Native delegation (capabilities are first-class objects, so the agent capability can be minted, handed to a delegate, and revoked natively). Treasury: keeping principal on the home chain co-locates funds with the object that owns them, and the current best stablecoin yield (suiUSDe) is Sui-native.
+**Why Sui is the default across these slots.** Native object model (an aNFT owns its own memory, wallets, and agent capability natively). One integrated privacy stack: Walrus (encrypted storage), Seal (threshold encryption with on-chain access policy), and Nautilus (attested compute) interoperate as a native whole, and Seal's owner-OR-M-of-N gated decryption maps directly onto the key and crypto-shredding model (§9). Optional onboarding conveniences (sponsored/gasless transactions) layer on top of a self-custody root with no third-party dependency. Native delegation (capabilities are first-class objects, so the agent capability can be minted, handed to a delegate, and revoked natively). Treasury: keeping principal on the home chain co-locates funds with the object that owns them, and Sui has deep stablecoin-lending liquidity (Suilend, NAVI) offering stable-denomination yield with fast withdrawal, which is what the survival path needs.
 
 The rationale rests on identity and privacy (the hard parts), not yield, payments, or liquidity (commodity layers). Honest counterweights: the cleaner machine-payment standard (x402) is not native to Sui, so XEL hosts its own facilitator; and the deepest liquidity and most-audited bridges still live on Ethereum and Solana. The primary chain remains owner-changeable via the chain-adapter design (§10.1).
 
@@ -1326,8 +1475,9 @@ The rationale rests on identity and privacy (the hard parts), not yield, payment
 | Attested compute (large-model private inference) | Phala Network (Intel TDX + NVIDIA H100/H200 GPU TEEs) | Additional GPU-TEE networks, then zkML |
 | Attested compute (alt) | Marlin (Oyster) | Additional coprocessor networks |
 | Relay | XEL-run relayer (Mysten pluggable pattern) | Many operators; relayer-in-TEE |
-| Inference (text) | GPU inference providers / Bittensor subnets | Many providers per schema |
+| Inference (text) | A provider *list*, not one provider. Candidates: GEN (attested), a decentralized inference market (Chutes / Bittensor subnets), and attested GPU-TEE inference (Phala) for sensitive characters. The character's privacy setting constrains the class: private or preserved-person characters route only to attested providers (memory is decrypted only inside an enclave); public characters with no sensitive memory may use cheaper open decentralized inference | Many providers per `inference.v1`; the list is owner-configurable and no single provider is load-bearing |
 | Voice generation (STT + TTS, message and real-time) | GEN voice pipeline (default); metered by output speech length or session duration | Any provider meeting `voice.v1`; multiple STT/TTS vendors |
+| Voice cloning (samples to reusable voice) | GEN voice-clone pipeline (default), run in attested compute; consent-gated (requires a voice-scoped consent artifact) and owner-root only; samples and model are SEAL-gated | Any provider meeting `voice_clone.v1`; the consent gate and SEAL classification are protocol-level, not provider-specific |
 | Image generation | GEN image pipeline (default); metered by resolution, steps, prompt length, reference-image count | Any provider meeting `image.v1` |
 | Video generation | GEN video pipeline (default); metered by clip count, duration, resolution, frame rate | Any provider meeting `video.v1` |
 | Payment standard | x402 (HTTP-native stablecoin payments), pay-per-call preferred and default | Any standard with the same properties |
@@ -1336,9 +1486,12 @@ The rationale rests on identity and privacy (the hard parts), not yield, payment
 | Card-to-crypto on-ramp | Stripe (optional, for paid interactions) | Any on-ramp; crypto-native path always works |
 | Interaction gate | Serving-layer reach × payment gates + scoped passwords (memory tiers) | Any serving provider meeting the schema |
 | Endowment / allocation accounting | On-chain Move `endowment` module (principal + ring-fenced allocations) | Native to any object-centric chain |
-| Yield harvest (heartbeat) | Permissionless authority-free trigger, contract-paid bounty; launch keeper is a third-party network (candidate: Talus Leaders) sending XEL's own heartbeat tx for the stablecoin bounty | Incentivized keeper network; any bot, owner scheduler, or heir can compete for the bounty |
+| Yield harvest (heartbeat) | Permissionless authority-free trigger, contract-paid bounty; launch keeper set is Talus Leaders (Path A) primary + XEL cron fallback, both firing XEL's own heartbeat tx for the stablecoin bounty. Harvest itself is on-chain and atomic: the keeper composes one PTB (venue withdraw/claim then heartbeat) so the yield never leaves on-chain control | Incentivized keeper network; any bot, owner scheduler, or heir can compete for the bounty |
 | Yield strategy (advisor) | XEL reference strategy in a Nautilus enclave (proposes within owner envelope) | Any attested strategy provider; owner-bounded |
-| Treasury execution | Home = Sui; Suilend / NAVI / Scallop lending; suiUSDe (~9–12%, variable) and USDsui; Haedal liquid staking (~2.5–3%) | Any venue meeting policy; multi-venue with allowlist, caps, failover |
+| Treasury execution (survival default) | Home = Sui. Survival principal in a stablecoin, supplied to stablecoin lending: default Suilend, fallback NAVI (both mid-single-digit APY, near-instant withdrawal to meet renewal deadlines). Swappable slot | Any lending venue meeting policy; multi-venue with allowlist, caps, failover |
+| Treasury execution (optional higher-variance) | Owner-chosen only, for surplus above the reserve, never the survival path: yield-bearing synthetic dollars (suiUSDe, higher but funding-rate/depeg risk) and SUI liquid staking (Haedal ~2.5–3%, volatile-denominated, multi-week unbonding). Flagged as higher-risk | Any venue meeting policy |
+| Survival renewal | On-chain reader of each blob's expiry (Walrus blob object field) + `extend_blob` before a ~2-epoch runway margin, in ~6-month chunks; WAL acquired just-in-time via the swap slot, SUI gas float self-funded from stablecoin | Permissionless keeper; anyone can trigger the renewal |
+| Denominations | Principal/yield: stablecoin. Storage: WAL (acquired just-in-time). Gas: SUI (self-funded float). Cross-chain receipts: swept to stablecoin on the primary (invariant 57) | Owner-configurable within policy |
 | Protocol fee | Disclosed on-chain, targeting ~10%: routing fee on interaction credits and discretionary storage, plus a fee on yield; keep-alive at cost, principal never touched; zero if self-provisioned | Fully avoidable by self-routing |
 | Price oracle | Pyth (Sui-native pull oracle) | Switchboard, Supra; multiple networks |
 | Swap | Aggregators: 7k, Aftermath, Hop over Cetus, DeepBook, Bluefin | Any aggregator meeting the policy |
@@ -1352,8 +1505,9 @@ The rationale rests on identity and privacy (the hard parts), not yield, payment
 | Media / STT / TTS / moderation / publishing | Commercial providers initially | Swappable per schema |
 | Public hosting | One shared client app on Walrus Sites (a single site object), rendering any character by object ID via client-side routing; served through a portal (default operator-run) | Already decentralized; portals are permissionless (anyone can run one), app is one fixed artifact not per-character |
 | Handle / naming | On-chain owner-set display label per character (not unique, no registry); operator-hosted reverse-lookup index powers `@handle` convenience URLs | Object ID is the true name and permanent link; handle index is disposable operator convenience |
-| Keeper / scheduler | Launch keeper is a third-party network (candidate: Talus Leaders) firing XEL's permissionless heartbeat for the stablecoin bounty (Path A); XEL adopts no keeper's workflow, gas, or token system. Costs no trust: the heartbeat is authority-free and can take nothing but the fixed bounty | Incentivized keeper network; the slot is permissionless and competitive, no keeper is hardcoded or load-bearing |
-| Custody / gas | Self-custody wallet (user holds keys, no third-party dependency); sponsored gas optional; login-based onboarding optional, not required | Self-custody default |
+| Keeper / scheduler | Launch keeper set is belt-and-suspenders: a third-party network (candidate: Talus Leaders) firing XEL's permissionless heartbeat for the stablecoin bounty (Path A) as primary, plus XEL's own cron as an independent fallback that fires the same tx if the primary misses. XEL adopts no keeper's workflow, gas, or token system (Talus's Nexus/gas rails are explicitly not used). Costs no trust: the heartbeat is authority-free and idempotent, so running both is safe and either alone suffices; it can take nothing but the fixed bounty. Harvest is not the keeper's job: the keeper composes one atomic PTB (venue withdraw/claim then heartbeat) so the yield flows on-chain within the transaction, the contract enforces amounts, and the keeper only pays gas | Incentivized keeper network; the slot is permissionless and competitive, no keeper is hardcoded or load-bearing |
+| Custody / gas | Self-custody wallet (user holds keys, no third-party dependency); login-based onboarding optional, not required | Self-custody default |
+| Gas sponsorship (per chain) | Native abstraction per chain, sponsor repaid in the SAME native gas token it spent via an in-transaction stablecoin->native swap, at cost, so its gas balance stays whole (invariant 57): SUI = sponsored transactions (Mysten sui-gas-pool / Enoki / Shinami); Base = ERC-4337 ERC-20 paymaster (accepts USDC, stays ETH-whole); Solana = fee-payer / relayer with in-tx swap (Octane-style). Onboarding gas (mint) may be an operator subsidy; ongoing-ops and sweep gas are reimbursed | Any gas station / paymaster / fee-payer per chain; swappable, owner can self-fund |
 | Wallet / signer | Owner signer default (Phantom, Sui support); delegate = operator key holding the agent capability; hardware wallet for sharp actions | Any wallet meeting the standard |
 | Free tier (operator-sponsored) | XEL, as operator, sponsors a limited free experience to remove onboarding friction: limited text conversation and initial mint, paid by XEL, not the endowment. Voice, image, and video are always paid (fan or endowment). Free mint is open for now; a gate may be added later | Operator-level perk, optional and non-load-bearing; if XEL is absent, minting is self-paid and interaction is paid or endowment-funded, and the character is unaffected |
 
@@ -1422,6 +1576,16 @@ And there is **the character's public page**, one shared app that shows any char
 
 Put together: you hold the character, the character holds its own money and points to its own private memory, the thinking happens in sealed services that prove they used the real character, and the whole thing keeps running without depending on any single company.
 
+## How it pays for itself
+
+The endowment is the part that makes XEL different from a normal AI character. A normal digital character survives while someone keeps paying a bill. A XEL is designed to carry its own fund, earn from that fund, and use the earnings to pay the small costs of staying alive.
+
+The fund is held in a stable denomination, not a token whose price has to go up for the character to survive. Its main job is boring on purpose: earn a conservative return, keep the encrypted memory paid for, and renew storage before it expires. When a renewal is due, a permissionless heartbeat checks the character's storage runway, harvests what is needed, converts only what must be converted, pays the bill, and compounds what remains.
+
+There are guardrails around that money. The keep-alive reserve is the floor that cannot be withdrawn past. Interaction money and fan credits are tracked separately so a busy month of chatting cannot drain the survival fund, and prepaid credits stay refundable until the promised interaction is delivered. If conditions get worse, yield drops or storage costs rise, the required reserve rises with them. The character measures its own survival instead of relying on a launch-day estimate.
+
+So the promise is not "magic forever." It is much stronger than that: a funded character has a mechanical path to keep paying its own way, and if it ever falls short, it degrades visibly and recoverably instead of being silently deleted.
+
 ## It lives in your wallet
 
 The character is an object, and you hold it in your own wallet. This is the difference between owning and renting, made real. When your character is an account on a company's server, the company holds it and lets you use it. When it is an object in your wallet, you hold it and no one else can reach it. Holding it is the only authority there is.
@@ -1471,6 +1635,214 @@ Every character has a permanent link based on its unique identity that keeps wor
 
 ---
 
+# Ownership and the aNFT
+
+XEL starts with a different ownership model from normal AI products. A character is not an account in XEL's database. It is an owned on-chain object: an autonomous NFT, or aNFT.
+
+Holding the aNFT is root authority over the character. That is what makes the character yours in the durable sense, not just accessible through an app login.
+
+## The aNFT is the character
+
+The aNFT is the root object for one character. It does not store every private memory in public. Instead, it holds the public facts and commitments that make the character verifiable:
+
+- who owns it;
+- where its encrypted memory and persona live;
+- what the current persona and memory commitments are;
+- what rules govern access, delegation, payments, and recovery;
+- what endowment and wallet references belong to it;
+- what provider policy it uses;
+- what public identity or handle it displays.
+
+The private material stays encrypted off-chain. The aNFT is the deed, the rulebook, and the pointer map. It is not a public copy of the character's private mind.
+
+## Why this is different from an account
+
+In a normal app, the company owns the database and gives you access. Your username, subscription, files, and AI character all exist inside that company's system. If the company changes the rules, deletes the account, loses the data, or shuts down, you are asking the company for mercy.
+
+In XEL, root authority is not a customer-service permission. It is possession of the aNFT. The company can run a nicer interface, help with onboarding, sponsor a free tier, or route default providers, but those are conveniences around the character. They are not the source of ownership.
+
+That is why the question changes from "will XEL let me keep this?" to "do I hold the object that controls it?"
+
+## What ownership gives you
+
+The owner can do root actions:
+
+- transfer or sell the character;
+- set or change managers and delegates;
+- configure interaction access and pricing;
+- choose provider policies;
+- raise or lower the keep-alive reserve within allowed limits;
+- withdraw surplus above protected reserves;
+- migrate the character to a future version;
+- set guardians and succession.
+
+These actions are root because they change who controls the character, how it survives, or what risks it may take.
+
+## What ownership does not expose
+
+Owning the aNFT does not mean the chain stores private memory in plaintext. The chain is public, so secrets do not belong there.
+
+Instead, ownership proves who is allowed to unlock encrypted material. The encrypted memory and persona live off-chain, and decryption is released only to the owner or the configured guardian threshold. Reading and spending are deliberately separated:
+
+- **Reading** can release a decryptable secret to the rightful owner.
+- **Spending** is authorized for a specific action; no one receives a copyable spending key.
+
+This matters. A copied read key is risky but understandable: reading is a copyable act. A copied spending key would be fatal because whoever holds it could sign anything. XEL avoids that by treating spending as bounded authority, not key handoff.
+
+## Transfer means everything moves
+
+If you transfer the aNFT, the character moves with it. The new owner becomes root authority. The old owner stops being root authority.
+
+That clean handoff is the reason the character is an object. A normal account transfer leaves loose ends: database rows, API keys, payment accounts, private settings, and forgotten admin access. XEL's design is that the character's authority follows one root object, while secrets are re-locked to the new owner.
+
+This is what makes selling, gifting, inheritance, and long-term custody possible without trusting the original operator.
+
+## Managers and delegates
+
+Not every action should require the owner. A creator may want a teammate, studio, or runtime operator to handle day-to-day work.
+
+Managers and delegates are scoped. They can do only what the owner granted:
+
+- update allowed settings;
+- operate within spend caps;
+- route approved providers;
+- perform routine maintenance;
+- run the character within a defined envelope.
+
+They cannot become the owner. They cannot transfer the aNFT. They cannot withdraw protected principal. They cannot widen their own authority. Delegation is useful because it is bounded and revocable.
+
+## Guardians and recovery
+
+Ownership also needs a recovery path. A character meant to last generations cannot die because one wallet was lost.
+
+Guardians are a threshold group chosen by the owner. They cannot operate the character day to day. Their role is narrow: help recover access or pass the character to an heir through a delayed, auditable process.
+
+The point is balance. A single lost key should not destroy a character, but no single guardian should be able to seize one.
+
+## Email login is not ownership
+
+XEL may offer email login or embedded-wallet onboarding so normal users are not forced to manage seed phrases on day one. That is a product convenience, not the immortal authority path.
+
+The durable path is wallet-based ownership and guardian recovery. If the company disappears, an email code from the company cannot be the thing that saves the character. The aNFT and recovery policy have to be enough.
+
+This is why users should secure or export their wallet and set guardians for characters they care about.
+
+## Why ownership builds trust
+
+The aNFT model makes the promise concrete:
+
+- the company is not the landlord;
+- the owner has root authority;
+- providers are replaceable;
+- private memory is encrypted;
+- funds belong to the character;
+- transfer and succession are first-class;
+- root actions cannot be taken by a hidden admin.
+
+That is the ownership thesis of XEL: a character should be property you control, not a subscription you rent.
+
+
+---
+
+# Survival Model
+
+XEL's permanence claim rests on a simple idea: a character should not depend on a person, company, or platform remembering to pay a bill. It should carry its own fund, know what it costs to survive, and renew the pieces that would otherwise expire.
+
+This is not a guarantee that nothing can ever go wrong. It is a design for making survival explicit, funded, measurable, and recoverable.
+
+## The core loop
+
+A character survives through a repeating cycle:
+
+1. The character has an endowment: principal held in a stable denomination.
+2. That principal earns yield.
+3. A permissionless heartbeat checks what the character needs.
+4. Core storage is renewed before it reaches its deadline.
+5. Provider and upkeep costs are paid at cost.
+6. Surplus compounds back into the character or funds interaction.
+7. The character publishes whether it is self-sustaining, short, or dormant.
+
+The important shift is that survival becomes a visible process, not a subscription hidden inside a company's billing system.
+
+## What must stay paid
+
+The most important bill is storage. A character's identity is anchored on-chain, but its memory, persona, media, and source material live in decentralized storage. That storage is durable, but it is not free forever. It is paid for a duration and then extended.
+
+So the survival loop is deadline-driven. It does not renew on a vague calendar, and it does not wait until the final moment. It reads remaining storage runway and renews before a safety margin is crossed. A missed cycle should leave time to retry.
+
+This is the difference between "we hope someone renews it" and "the character can see its own deadline and act before it arrives."
+
+## Why stable funding matters
+
+The survival fund is held in a stable denomination because the bills are effectively stable-denominated. If the survival path depended on a volatile token, a market drop could cut the character's runway exactly when a renewal is due.
+
+Higher-risk yield can exist as an owner choice for surplus funds, but it should not be the default survival path. The default is intentionally boring: stable principal, conservative yield, fast withdrawal, enough liquidity to pay renewal deadlines.
+
+The goal is not to chase the highest headline rate. The goal is to make the math honest.
+
+## The reserve floor
+
+The keep-alive reserve is the protected floor. Automatic spending and owner withdrawals cannot cross it. That means a creator can withdraw surplus, but cannot accidentally cash out the funds that make the character survive.
+
+The reserve is not just a number set once at creation. It responds to conditions:
+
+- If realized yield falls, the amount needed to survive rises.
+- If storage costs rise, the amount needed to survive rises.
+- If fans have prepaid credits, that liability is protected until the credits are spent or refunded.
+- If conditions improve, the floor can ease only conservatively.
+
+This is why the character measures itself continuously. "Funded forever" is not a mint-day slogan; it is a current health state.
+
+## The buckets
+
+The endowment is split into purpose-bound balances:
+
+- **Keep-alive:** core existence, storage, and renewal.
+- **Storage:** larger media, extra memories, and non-core assets.
+- **Interaction:** inference, voice, image, video, and other active use.
+
+The buckets cannot drain one another. A viral day of interaction can exhaust the interaction budget without touching the keep-alive reserve. A storage shortfall can pause new saves without taking the character offline. Isolation is what makes failure graceful instead of catastrophic.
+
+## What happens in each condition
+
+**Newly funded:** the character fills a small liquid buffer, puts the rest to work, and reports whether the endowment is enough to cover survival at current assumptions.
+
+**Healthy and quiet:** yield covers storage and upkeep. The character stays alive even if nobody talks to it.
+
+**Popular:** paid interaction covers its own compute cost first, then the earned remainder can strengthen the endowment. Attention becomes permanence.
+
+**Yield drops:** the required reserve rises. Interaction is squeezed before survival. The character may talk less, but it defends the memory and identity first.
+
+**Storage cost rises:** the character recomputes the required principal and reports the shortfall instead of pretending the old estimate still holds.
+
+**Underfunded:** the character degrades visibly. Interaction can pause, new storage can pause, and the character can go dormant, but it remains owned and recoverable while its core substrate remains paid.
+
+**Deep neglect:** if the endowment is empty and nobody tops it up long enough for core storage to lapse, the substrate can be lost. XEL is explicit about this because permanence without funding is not real.
+
+## Why a company is not the survival path
+
+XEL can run helpful defaults: hosted pages, provider routing, a free tier, payment facilitators, and friendly handles. None of those are the thing that keeps a funded character alive.
+
+The survival path is:
+
+- owned object;
+- encrypted decentralized storage;
+- self-funded endowment;
+- permissionless heartbeat;
+- replaceable providers;
+- public health state.
+
+If the company disappears, a funded character should lose convenience, not ownership, memory, or the ability to be served by another provider.
+
+## What users should believe
+
+The honest claim is not "nothing can ever fail." The honest claim is:
+
+XEL turns permanence from a platform promise into a set of public mechanisms: owned authority, encrypted storage, self-funding, early renewal, protected reserves, and graceful dormancy. A character that is funded or valued has a path to keep itself alive. A character that falls short shows the shortfall and can be revived.
+
+
+---
+
 # Endowments and Creator Earnings
 
 The money story has two halves. An endowment is how a character sustains its own existence. Creator earnings are how a person makes money from a character people value. This section covers both, and how they interlock: a loved character can fund its own survival and grow. Honest throughout, because this is a real decision with real stakes.
@@ -1485,17 +1857,29 @@ XEL removes the person who has to keep paying. Instead of a bill someone owes, a
 
 If you have heard how a university or foundation endowment works, you already understand the shape. You give it a sum once. The sum is invested and earns a return. The return funds the mission, year after year, while the original sum is protected and not spent down. It outlives its founder because it lives on its income, not its savings. A character's fund works the same way, and the rest of this section is the detail.
 
+## The simple version
+
+The endowment is five moving parts:
+
+1. **Principal:** the long-term fund, held in a stable denomination so survival does not depend on a volatile token price.
+2. **Yield:** the return that fund earns. Yield is fuel, not a promise.
+3. **Heartbeat:** the permissionless cycle anyone can trigger. It checks what is due, harvests what is needed, pays at cost, and compounds the rest.
+4. **Reserve floor:** the protected amount that automatic spending and owner withdrawals cannot cross.
+5. **Buckets:** separate balances for keep-alive, storage, and interaction, so one kind of activity cannot accidentally drain another.
+
+Those parts are what make the claim credible. The character is not asking a company to remember a subscription. It has money, rules for that money, and a public cycle that turns earnings into survival.
+
 ## How the endowment works
 
-You fund the character once, with stable digital money (a stablecoin, which holds a steady value rather than swinging around). That principal is put to work earning a steady return. On a regular schedule, an automatic process collects the return and uses it to pay the character's small running costs, mostly the cost of keeping its encrypted memory stored, plus tiny fees for the upkeep process itself.
+You fund the character once, with stable digital money (a stablecoin, which holds a steady value rather than swinging around). That principal is put to work earning a conservative stable-denomination return, because the character's bills are effectively stable-denominated too. On a regular schedule, an automatic process checks what is due, harvests only what it needs, and uses it to pay the character's small running costs, mostly the cost of keeping its encrypted memory stored, plus tiny fees for the upkeep process itself.
 
-Set up well, the return covers the costs and the principal is never touched. The character lives on its income. That automatic process is called the heartbeat, and it is permissionless: anyone can trigger it, and it can only do the one job of harvesting, paying due costs, and compounding the rest. No company has to run it, and if one keeper stops, another can step in, or the owner can trigger it. The character does not depend on anyone tending it.
+Set up well, the return covers the costs and the principal is never touched. The character lives on its income. That automatic process is called the heartbeat, and it is permissionless: anyone can trigger it, and it can only do the job of checking storage runway, renewing before expiry, harvesting or converting funds within policy, paying due costs, and compounding the rest. No company has to run it, and if one keeper stops, another can step in, or the owner can trigger it. The character does not depend on anyone tending it.
 
 ## The reserve floor: why a character can't spend itself to death
 
 A character can spend its returns, but there is a line it can never cross: the keep-alive reserve. This is a floor on the principal, set by the owner and never allowed below a hard minimum, and no automatic payment or owner withdrawal can breach it. It is the same idea as a foundation being legally barred from spending its core endowment.
 
-Why it matters: without a floor, a run of costs or a careless withdrawal could drain a character down to nothing, and it would die. With the floor, the worst case is that the character goes quiet, not that it disappears. The reserve is what makes "it will not accidentally spend itself into death" a rule the contract enforces, not a hope you have to trust.
+Why it matters: without a floor, a run of costs or a careless withdrawal could drain a character down to nothing, and it would die. With the floor, the worst case is that the character goes quiet, not that it disappears. The floor is dynamic: if realized yield falls or storage costs rise, the required reserve rises to defend survival, and it also protects unspent fan credits until those credits are used or refunded. The reserve is what makes "it will not accidentally spend itself into death" a rule the contract enforces, not a hope you have to trust.
 
 ## The three buckets
 
@@ -1507,13 +1891,27 @@ The endowment is not one pool of money. It is split into ring-fenced buckets, an
 
 Ring-fencing is not bureaucracy; it is protection. A viral month of conversation drains the interaction bucket, but it can never touch the keep-alive bucket that holds the character's memory. A storage shortfall pauses new saves, but it can never silence the character. Each part can run low on its own without dragging the others down, which is why a character degrades gracefully instead of failing all at once.
 
+## The survival loop
+
+The heartbeat does the same small job forever:
+
+1. Read the current storage runway.
+2. Check whether any core storage is getting close to its renewal margin.
+3. Harvest only the yield needed for this cycle.
+4. Convert only what must be converted to pay the bill.
+5. Renew storage before it lapses.
+6. Recompute the reserve from current yield and current storage cost.
+7. Put surplus back to work.
+
+This is why the storage piece matters. A character's memory is only permanent if the storage underneath it stays paid. XEL does not wait for the last day. It renews early, in chunks, with slack for retries. The expensive operation happens only when needed; the cheap check can happen often. That is how the design keeps survival both durable and cheap.
+
 ## Where the money comes from
 
 An endowment is fed two ways.
 
 **Yield.** The return earned on the principal. This is the passive source, always working in the background, and for a quiet character it is the whole story. The honest part: yield is not guaranteed. It varies, and it can be low or even zero for stretches. XEL never promises a rate, and you should size a character assuming bad conditions, not good ones (see the next article).
 
-**Earnings.** Income from the character being used or supported: paid interaction, tips, or anyone topping it up. When someone pays to talk to a character, the cost of that interaction is always covered first, and the rest flows into the endowment. So a character that people actually value does not just sustain itself, it grows its own fund. A quiet character lives on yield; a loved one compounds.
+**Earnings.** Income from the character being used or supported: paid interaction, tips, or anyone topping it up. When someone pays to talk to a character, the cost of that interaction is always covered first, and unspent credits remain a refundable liability until the interaction is delivered. Only the earned remainder flows into the endowment. So a character that people actually value does not just sustain itself, it grows its own fund. A quiet character lives on yield; a loved one compounds.
 
 ## How much should I put in?
 
@@ -1526,6 +1924,12 @@ To cover $20 a year from yield alone at a cautious 4 percent (well below headlin
 Stress it. If yield falls to 2 percent, the same $20 a year needs about $1,000. If yield goes to zero for a stretch, a $500 endowment drawing only its keep-alive costs still funds roughly 25 years before reaching its floor, during which any top-up or a single paid period resets the clock. Add even light popularity, say a few dollars a month of paid interaction, and earnings swamp a $20 burn: the principal grows instead of shrinking.
 
 The takeaway: a modest one-time amount makes "quiet forever" realistic, and any real usage turns the fund into a growing one. All the inputs vary, so treat these as intuition, not a quote, and size for the bad case.
+
+## Why earnings make it stronger
+
+The important shift is that usage does not only monetize a character; it can reinforce it. Paid interaction first covers the provider cost, then the earned remainder can feed the endowment. Tips and donations do the same. A character people value becomes better funded over time, which means more runway, a stronger reserve, and less dependence on the original creator.
+
+That is the economic thesis of XEL in one sentence: attention can become permanence. A character that matters to people can turn that value into the fund that keeps it alive.
 
 ## What happens if it runs short
 
@@ -1547,7 +1951,7 @@ The endowment is about a character paying for itself. Creator earnings are about
 
 ### How a character earns
 
-When people interact with a character on paid terms, that interaction generates income. A visitor pays to talk, to hear a voice, to get an image or a video, or simply tips to support a character they value. The real cost of serving that interaction is always covered first, out of what the visitor paid, before anything is counted as earnings. So a character can never earn its way into being underwater; the work is paid for before the profit is booked. What is left after cost is the character's earnings, and there is a small routing fee on that, which you can avoid entirely by routing to your own providers.
+When people interact with a character on paid terms, that interaction generates income. A visitor pays to talk, to hear a voice, to get an image or a video, or simply tips to support a character they value. The real cost of serving that interaction is always covered first, out of what the visitor paid, before anything is counted as earnings. So a character can never earn its way into being underwater; the work is paid for before the profit is booked. The fee is taken once on inbound value and capped so it never exceeds the post-compute margin. What is left after cost and fee is the character's earnings, and you can avoid routing fees entirely by routing to your own providers.
 
 ### Where earnings go, your choice
 
@@ -1555,7 +1959,7 @@ This is the decision that matters. Earnings can do one of two things, and you de
 
 ### Pricing your character
 
-You set whether each way of interacting is free, tip-supported, or paid, and at what price, with caps on the expensive modes so costs stay bounded. Visitors see this as simple credits or a monthly pass in normal dollars, never as tokens or technical units. You can run a free public character, a paid one, a private paid one for a small circle, or any mix, and change it whenever you like.
+You set whether interaction is free, tip-supported, or paid, then choose a markup and caps on the expensive modes so costs stay bounded. The same markup can apply across text, voice, image, and video while the meter scales the absolute price with each mode's real cost. Visitors see this as simple credits or a monthly pass in normal dollars, never as tokens or technical units. You can run a free public character, a paid one, a private paid one for a small circle, or any mix, and change it whenever you like.
 
 ### Earnings and survival, together
 
@@ -1643,7 +2047,7 @@ The standard defines capability slots and what each must do, not who fills them.
 
 ## The endowment
 
-The endowment holds a principal (stablecoin) that earns yield, plus a small liquid buffer, split into ring-fenced allocations (keep-alive, storage, interaction) that cannot drain one another. A permissionless heartbeat collects yield each cycle, distributes it in priority order, pays due costs, and compounds the rest. The owner sets a keep-alive reserve that withdrawals can never breach. Fed by yield and by earned income, with compute always covered first. Sized against adverse yield, never a promised return. Full treatment in Funding a Character.
+The endowment holds a principal in a stable denomination that matches the bills, plus a small liquid buffer, split into ring-fenced allocations (keep-alive, storage, interaction) that cannot drain one another. A permissionless heartbeat checks live storage runway, harvests yield only when needed, renews storage before it lapses, distributes funds in priority order, and compounds the rest. The owner sets a keep-alive reserve that withdrawals can never breach, and the reserve rises to cover both survival needs and any unspent fan-credit liability. Fed by yield and by earned income, with compute always covered first. Sized against adverse yield, never a promised return. Full treatment in Funding a Character.
 
 ## Identity and commitments
 
@@ -1667,7 +2071,7 @@ Who may interact, and on what terms, is set along two independent dials. Reach: 
 
 ## Modalities and billing
 
-A character works in text, voice (messages and real-time calls), image, and video; the owner chooses which are on and how they are priced. Billing is a meter over real cost drivers, not a flat list: every interaction returns a usage record (tokens, audio-seconds or session length, image resolution and reference count, video length and resolution), and settlement is true cost plus a routing fee. Predictable actions are quoted up front; variable or session actions run against a pre-authorized hold and settle the actual amount. Compute is always covered before anything is kept. Fans see credits or a pass, never tokens.
+A character works in text, voice (messages and real-time calls), image, and video; the owner chooses which are on and sets one markup that applies across modalities. Billing is a meter over real cost drivers, not a flat list: every interaction returns a usage record (tokens, audio-seconds or session length, image resolution and reference count, video length and resolution), and settlement covers true cost first. The fee is taken once on inbound value and capped so compute and fan-credit obligations stay whole. Predictable actions are quoted up front; variable or session actions run against a pre-authorized hold and settle the actual amount. Fans see credits or a pass, never tokens; prepaid credits are the fan's until spent.
 
 ## The public page and naming
 
@@ -1741,7 +2145,7 @@ Honor deletion by crypto-shredding: destroy the decryption key, not the immutabl
 
 # Architecture
 
-The deep how, paired with the whitepaper and the build spec, which are the formal sources of truth.
+The deep how, paired with the whitepaper and technical reference pages that explain the principles behind XEL without exposing internal implementation plans.
 
 - System overview: the full diagram, chain, storage, compute, providers, client, portal.
 - On-chain vs off-chain: what lives where and the verifiability model.
@@ -1760,16 +2164,15 @@ The deep how, paired with the whitepaper and the build spec, which are the forma
 
 # Reference
 
-Look things up. Rendered from the build spec, which is the source of truth, so it never drifts.
+Look things up. This page is the public map of the technical surfaces that matter for understanding and integrating with XEL.
 
-- Capability schemas: inference.v1, ingestion.v1, retrieval.v1, treasury.v1, distillation.v1, voice.v1, image.v1, video.v1, full request and response.
-- Move modules: every on-chain module, its types, and its public functions.
-- The aNFT object: every field, its meaning, and its mutability.
-- Invariants: the full enforced list, each with the guarantee it provides.
-- Error codes: the consolidated table.
-- Events: every emitted event and when it fires.
+- Capability families: inference, ingestion, retrieval, treasury, distillation, voice, image, and video.
+- On-chain surfaces: identity, authority, guardians, treasury policy, payment policy, storage policy, lineage, and migration.
+- The aNFT object: what it owns, what it points to, and what remains immutable.
+- Invariants: the public guarantees each subsystem must preserve.
+- Events: the public receipts and status changes indexers and clients can explain to users.
 - Payment modes: up-to, exact, and hold, and when each applies.
-- The usage record: every metered dimension by modality.
+- The usage record: metered dimensions by modality, summarized for quoting and settlement.
 - Glossary: every term, one line each.
 - Client API: the reference client methods, once the SDK surface is finalized.
 
@@ -1802,7 +2205,6 @@ For people who want to run the plumbing. This is where the open market lives.
 - FAQ: common questions for users and builders, in the next section.
 - Glossary: every term defined once.
 - Whitepaper: the vision, architecture, and full invariant list.
-- Build spec: the formal reference for on-chain types, schemas, and flows.
 - Security and disclosure: how to report an issue, the trust assumptions, and audits.
 - Changelog: versioned changes to the standard and the schemas.
 - Community and support: where to ask questions and how to contribute.

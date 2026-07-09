@@ -1,0 +1,111 @@
+---
+title: "Ownership and the aNFT"
+description: "How XEL ownership works, what the aNFT controls, and why authority follows the character instead of a company account."
+---
+
+# Ownership and the aNFT
+
+XEL starts with a different ownership model from normal AI products. A character is not an account in XEL's database. It is an owned on-chain object: an autonomous NFT, or aNFT.
+
+Holding the aNFT is root authority over the character. That is what makes the character yours in the durable sense, not just accessible through an app login.
+
+## The aNFT is the character
+
+The aNFT is the root object for one character. It does not store every private memory in public. Instead, it holds the public facts and commitments that make the character verifiable:
+
+- who owns it;
+- where its encrypted memory and persona live;
+- what the current persona and memory commitments are;
+- what rules govern access, delegation, payments, and recovery;
+- what endowment and wallet references belong to it;
+- what provider policy it uses;
+- what public identity or handle it displays.
+
+The private material stays encrypted off-chain. The aNFT is the deed, the rulebook, and the pointer map. It is not a public copy of the character's private mind.
+
+## Why this is different from an account
+
+In a normal app, the company owns the database and gives you access. Your username, subscription, files, and AI character all exist inside that company's system. If the company changes the rules, deletes the account, loses the data, or shuts down, you are asking the company for mercy.
+
+In XEL, root authority is not a customer-service permission. It is possession of the aNFT. The company can run a nicer interface, help with onboarding, sponsor a free tier, or route default providers, but those are conveniences around the character. They are not the source of ownership.
+
+That is why the question changes from "will XEL let me keep this?" to "do I hold the object that controls it?"
+
+## What ownership gives you
+
+The owner can do root actions:
+
+- transfer or sell the character;
+- set or change managers and delegates;
+- configure interaction access and pricing;
+- choose provider policies;
+- raise or lower the keep-alive reserve within allowed limits;
+- withdraw surplus above protected reserves;
+- migrate the character to a future version;
+- set guardians and succession.
+
+These actions are root because they change who controls the character, how it survives, or what risks it may take.
+
+## What ownership does not expose
+
+Owning the aNFT does not mean the chain stores private memory in plaintext. The chain is public, so secrets do not belong there.
+
+Instead, ownership proves who is allowed to unlock encrypted material. The encrypted memory and persona live off-chain, and decryption is released only to the owner or the configured guardian threshold. Reading and spending are deliberately separated:
+
+- **Reading** can release a decryptable secret to the rightful owner.
+- **Spending** is authorized for a specific action; no one receives a copyable spending key.
+
+This matters. A copied read key is risky but understandable: reading is a copyable act. A copied spending key would be fatal because whoever holds it could sign anything. XEL avoids that by treating spending as bounded authority, not key handoff.
+
+## Transfer means everything moves
+
+If you transfer the aNFT, the character moves with it. The new owner becomes root authority. The old owner stops being root authority.
+
+That clean handoff is the reason the character is an object. A normal account transfer leaves loose ends: database rows, API keys, payment accounts, private settings, and forgotten admin access. XEL's design is that the character's authority follows one root object, while secrets are re-locked to the new owner.
+
+This is what makes selling, gifting, inheritance, and long-term custody possible without trusting the original operator.
+
+## Managers and delegates
+
+Not every action should require the owner. A creator may want a teammate, studio, or runtime operator to handle day-to-day work.
+
+Managers and delegates are scoped. They can do only what the owner granted:
+
+- update allowed settings;
+- operate within spend caps;
+- route approved providers;
+- perform routine maintenance;
+- run the character within a defined envelope.
+
+They cannot become the owner. They cannot transfer the aNFT. They cannot withdraw protected principal. They cannot widen their own authority. Delegation is useful because it is bounded and revocable.
+
+## Guardians and recovery
+
+Ownership also needs a recovery path. A character meant to last generations cannot die because one wallet was lost.
+
+Guardians are a threshold group chosen by the owner. They cannot operate the character day to day. Their role is narrow: help recover access or pass the character to an heir through a delayed, auditable process.
+
+The point is balance. A single lost key should not destroy a character, but no single guardian should be able to seize one.
+
+## Email login is not ownership
+
+XEL may offer email login or embedded-wallet onboarding so normal users are not forced to manage seed phrases on day one. That is a product convenience, not the immortal authority path.
+
+The durable path is wallet-based ownership and guardian recovery. If the company disappears, an email code from the company cannot be the thing that saves the character. The aNFT and recovery policy have to be enough.
+
+This is why users should secure or export their wallet and set guardians for characters they care about.
+
+## Why ownership builds trust
+
+The aNFT model makes the promise concrete:
+
+- the company is not the landlord;
+- the owner has root authority;
+- providers are replaceable;
+- private memory is encrypted;
+- funds belong to the character;
+- transfer and succession are first-class;
+- root actions cannot be taken by a hidden admin.
+
+That is the ownership thesis of XEL: a character should be property you control, not a subscription you rent.
+

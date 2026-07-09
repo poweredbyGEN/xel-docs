@@ -14,6 +14,8 @@ Recommended reading order:
 - FAQ: https://docs.xel.xyz/faq/
 - Whitepaper: https://docs.xel.xyz/whitepaper/
 - How It Works: https://docs.xel.xyz/how-it-works/
+- Ownership and the aNFT: https://docs.xel.xyz/ownership-and-anft/
+- Survival Model: https://docs.xel.xyz/survival-model/
 - Endowments and Creator Earnings: https://docs.xel.xyz/endowments-and-creator-earnings/
 - If XEL Disappears: https://docs.xel.xyz/if-xel-disappears/
 - Concepts: https://docs.xel.xyz/concepts/
@@ -42,6 +44,14 @@ XEL is a standard for creating living characters that are truly, permanently you
 
 The mechanism in plain language, no code. By the end you know what actually happens when a character exists, remembers, thinks, earns, lasts, and is passed on, and why no company can take it from you.
 
+## Ownership and the aNFT
+
+XEL starts with a different ownership model from normal AI products. A character is not an account in XEL's database. It is an owned on-chain object: an autonomous NFT, or aNFT.
+
+## Survival Model
+
+XEL's permanence claim rests on a simple idea: a character should not depend on a person, company, or platform remembering to pay a bill. It should carry its own fund, know what it costs to survive, and renew the pieces that would otherwise expire.
+
 ## Endowments and Creator Earnings
 
 The money story has two halves. An endowment is how a character sustains its own existence. Creator earnings are how a person makes money from a character people value. This section covers both, and how they interlock: a loved character can fund its own survival and grow. Honest throughout, because this is a real decision with real stakes.
@@ -60,11 +70,11 @@ From nothing to a character you own, funded and running. Code lands with the SDK
 
 ## Architecture
 
-The deep how, paired with the whitepaper and the build spec, which are the formal sources of truth.
+The deep how, paired with the whitepaper and technical reference pages that explain the principles behind XEL without exposing internal implementation plans.
 
 ## Reference
 
-Look things up. Rendered from the build spec, which is the source of truth, so it never drifts.
+Look things up. This page is the public map of the technical surfaces that matter for understanding and integrating with XEL.
 
 ## Running Infrastructure
 
@@ -75,7 +85,6 @@ For people who want to run the plumbing. This is where the open market lives.
 - FAQ: common questions for users and builders, in the next section.
 - Glossary: every term defined once.
 - Whitepaper: the vision, architecture, and full invariant list.
-- Build spec: the formal reference for on-chain types, schemas, and flows.
 - Security and disclosure: how to report an issue, the trust assumptions, and audits.
 - Changelog: versioned changes to the standard and the schemas.
 - Community and support: where to ask questions and how to contribute.

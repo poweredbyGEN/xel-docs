@@ -17,17 +17,29 @@ XEL removes the person who has to keep paying. Instead of a bill someone owes, a
 
 If you have heard how a university or foundation endowment works, you already understand the shape. You give it a sum once. The sum is invested and earns a return. The return funds the mission, year after year, while the original sum is protected and not spent down. It outlives its founder because it lives on its income, not its savings. A character's fund works the same way, and the rest of this section is the detail.
 
+## The simple version
+
+The endowment is five moving parts:
+
+1. **Principal:** the long-term fund, held in a stable denomination so survival does not depend on a volatile token price.
+2. **Yield:** the return that fund earns. Yield is fuel, not a promise.
+3. **Heartbeat:** the permissionless cycle anyone can trigger. It checks what is due, harvests what is needed, pays at cost, and compounds the rest.
+4. **Reserve floor:** the protected amount that automatic spending and owner withdrawals cannot cross.
+5. **Buckets:** separate balances for keep-alive, storage, and interaction, so one kind of activity cannot accidentally drain another.
+
+Those parts are what make the claim credible. The character is not asking a company to remember a subscription. It has money, rules for that money, and a public cycle that turns earnings into survival.
+
 ## How the endowment works
 
-You fund the character once, with stable digital money (a stablecoin, which holds a steady value rather than swinging around). That principal is put to work earning a steady return. On a regular schedule, an automatic process collects the return and uses it to pay the character's small running costs, mostly the cost of keeping its encrypted memory stored, plus tiny fees for the upkeep process itself.
+You fund the character once, with stable digital money (a stablecoin, which holds a steady value rather than swinging around). That principal is put to work earning a conservative stable-denomination return, because the character's bills are effectively stable-denominated too. On a regular schedule, an automatic process checks what is due, harvests only what it needs, and uses it to pay the character's small running costs, mostly the cost of keeping its encrypted memory stored, plus tiny fees for the upkeep process itself.
 
-Set up well, the return covers the costs and the principal is never touched. The character lives on its income. That automatic process is called the heartbeat, and it is permissionless: anyone can trigger it, and it can only do the one job of harvesting, paying due costs, and compounding the rest. No company has to run it, and if one keeper stops, another can step in, or the owner can trigger it. The character does not depend on anyone tending it.
+Set up well, the return covers the costs and the principal is never touched. The character lives on its income. That automatic process is called the heartbeat, and it is permissionless: anyone can trigger it, and it can only do the job of checking storage runway, renewing before expiry, harvesting or converting funds within policy, paying due costs, and compounding the rest. No company has to run it, and if one keeper stops, another can step in, or the owner can trigger it. The character does not depend on anyone tending it.
 
 ## The reserve floor: why a character can't spend itself to death
 
 A character can spend its returns, but there is a line it can never cross: the keep-alive reserve. This is a floor on the principal, set by the owner and never allowed below a hard minimum, and no automatic payment or owner withdrawal can breach it. It is the same idea as a foundation being legally barred from spending its core endowment.
 
-Why it matters: without a floor, a run of costs or a careless withdrawal could drain a character down to nothing, and it would die. With the floor, the worst case is that the character goes quiet, not that it disappears. The reserve is what makes "it will not accidentally spend itself into death" a rule the contract enforces, not a hope you have to trust.
+Why it matters: without a floor, a run of costs or a careless withdrawal could drain a character down to nothing, and it would die. With the floor, the worst case is that the character goes quiet, not that it disappears. The floor is dynamic: if realized yield falls or storage costs rise, the required reserve rises to defend survival, and it also protects unspent fan credits until those credits are used or refunded. The reserve is what makes "it will not accidentally spend itself into death" a rule the contract enforces, not a hope you have to trust.
 
 ## The three buckets
 
@@ -39,13 +51,27 @@ The endowment is not one pool of money. It is split into ring-fenced buckets, an
 
 Ring-fencing is not bureaucracy; it is protection. A viral month of conversation drains the interaction bucket, but it can never touch the keep-alive bucket that holds the character's memory. A storage shortfall pauses new saves, but it can never silence the character. Each part can run low on its own without dragging the others down, which is why a character degrades gracefully instead of failing all at once.
 
+## The survival loop
+
+The heartbeat does the same small job forever:
+
+1. Read the current storage runway.
+2. Check whether any core storage is getting close to its renewal margin.
+3. Harvest only the yield needed for this cycle.
+4. Convert only what must be converted to pay the bill.
+5. Renew storage before it lapses.
+6. Recompute the reserve from current yield and current storage cost.
+7. Put surplus back to work.
+
+This is why the storage piece matters. A character's memory is only permanent if the storage underneath it stays paid. XEL does not wait for the last day. It renews early, in chunks, with slack for retries. The expensive operation happens only when needed; the cheap check can happen often. That is how the design keeps survival both durable and cheap.
+
 ## Where the money comes from
 
 An endowment is fed two ways.
 
 **Yield.** The return earned on the principal. This is the passive source, always working in the background, and for a quiet character it is the whole story. The honest part: yield is not guaranteed. It varies, and it can be low or even zero for stretches. XEL never promises a rate, and you should size a character assuming bad conditions, not good ones (see the next article).
 
-**Earnings.** Income from the character being used or supported: paid interaction, tips, or anyone topping it up. When someone pays to talk to a character, the cost of that interaction is always covered first, and the rest flows into the endowment. So a character that people actually value does not just sustain itself, it grows its own fund. A quiet character lives on yield; a loved one compounds.
+**Earnings.** Income from the character being used or supported: paid interaction, tips, or anyone topping it up. When someone pays to talk to a character, the cost of that interaction is always covered first, and unspent credits remain a refundable liability until the interaction is delivered. Only the earned remainder flows into the endowment. So a character that people actually value does not just sustain itself, it grows its own fund. A quiet character lives on yield; a loved one compounds.
 
 ## How much should I put in?
 
@@ -58,6 +84,12 @@ To cover $20 a year from yield alone at a cautious 4 percent (well below headlin
 Stress it. If yield falls to 2 percent, the same $20 a year needs about $1,000. If yield goes to zero for a stretch, a $500 endowment drawing only its keep-alive costs still funds roughly 25 years before reaching its floor, during which any top-up or a single paid period resets the clock. Add even light popularity, say a few dollars a month of paid interaction, and earnings swamp a $20 burn: the principal grows instead of shrinking.
 
 The takeaway: a modest one-time amount makes "quiet forever" realistic, and any real usage turns the fund into a growing one. All the inputs vary, so treat these as intuition, not a quote, and size for the bad case.
+
+## Why earnings make it stronger
+
+The important shift is that usage does not only monetize a character; it can reinforce it. Paid interaction first covers the provider cost, then the earned remainder can feed the endowment. Tips and donations do the same. A character people value becomes better funded over time, which means more runway, a stronger reserve, and less dependence on the original creator.
+
+That is the economic thesis of XEL in one sentence: attention can become permanence. A character that matters to people can turn that value into the fund that keeps it alive.
 
 ## What happens if it runs short
 
@@ -79,7 +111,7 @@ The endowment is about a character paying for itself. Creator earnings are about
 
 ### How a character earns
 
-When people interact with a character on paid terms, that interaction generates income. A visitor pays to talk, to hear a voice, to get an image or a video, or simply tips to support a character they value. The real cost of serving that interaction is always covered first, out of what the visitor paid, before anything is counted as earnings. So a character can never earn its way into being underwater; the work is paid for before the profit is booked. What is left after cost is the character's earnings, and there is a small routing fee on that, which you can avoid entirely by routing to your own providers.
+When people interact with a character on paid terms, that interaction generates income. A visitor pays to talk, to hear a voice, to get an image or a video, or simply tips to support a character they value. The real cost of serving that interaction is always covered first, out of what the visitor paid, before anything is counted as earnings. So a character can never earn its way into being underwater; the work is paid for before the profit is booked. The fee is taken once on inbound value and capped so it never exceeds the post-compute margin. What is left after cost and fee is the character's earnings, and you can avoid routing fees entirely by routing to your own providers.
 
 ### Where earnings go, your choice
 
@@ -87,7 +119,7 @@ This is the decision that matters. Earnings can do one of two things, and you de
 
 ### Pricing your character
 
-You set whether each way of interacting is free, tip-supported, or paid, and at what price, with caps on the expensive modes so costs stay bounded. Visitors see this as simple credits or a monthly pass in normal dollars, never as tokens or technical units. You can run a free public character, a paid one, a private paid one for a small circle, or any mix, and change it whenever you like.
+You set whether interaction is free, tip-supported, or paid, then choose a markup and caps on the expensive modes so costs stay bounded. The same markup can apply across text, voice, image, and video while the meter scales the absolute price with each mode's real cost. Visitors see this as simple credits or a monthly pass in normal dollars, never as tokens or technical units. You can run a free public character, a paid one, a private paid one for a small circle, or any mix, and change it whenever you like.
 
 ### Earnings and survival, together
 

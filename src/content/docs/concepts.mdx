@@ -25,7 +25,7 @@ The standard defines capability slots and what each must do, not who fills them.
 
 ## The endowment
 
-The endowment holds a principal (stablecoin) that earns yield, plus a small liquid buffer, split into ring-fenced allocations (keep-alive, storage, interaction) that cannot drain one another. A permissionless heartbeat collects yield each cycle, distributes it in priority order, pays due costs, and compounds the rest. The owner sets a keep-alive reserve that withdrawals can never breach. Fed by yield and by earned income, with compute always covered first. Sized against adverse yield, never a promised return. Full treatment in Funding a Character.
+The endowment holds a principal in a stable denomination that matches the bills, plus a small liquid buffer, split into ring-fenced allocations (keep-alive, storage, interaction) that cannot drain one another. A permissionless heartbeat checks live storage runway, harvests yield only when needed, renews storage before it lapses, distributes funds in priority order, and compounds the rest. The owner sets a keep-alive reserve that withdrawals can never breach, and the reserve rises to cover both survival needs and any unspent fan-credit liability. Fed by yield and by earned income, with compute always covered first. Sized against adverse yield, never a promised return. Full treatment in Funding a Character.
 
 ## Identity and commitments
 
@@ -49,7 +49,7 @@ Who may interact, and on what terms, is set along two independent dials. Reach: 
 
 ## Modalities and billing
 
-A character works in text, voice (messages and real-time calls), image, and video; the owner chooses which are on and how they are priced. Billing is a meter over real cost drivers, not a flat list: every interaction returns a usage record (tokens, audio-seconds or session length, image resolution and reference count, video length and resolution), and settlement is true cost plus a routing fee. Predictable actions are quoted up front; variable or session actions run against a pre-authorized hold and settle the actual amount. Compute is always covered before anything is kept. Fans see credits or a pass, never tokens.
+A character works in text, voice (messages and real-time calls), image, and video; the owner chooses which are on and sets one markup that applies across modalities. Billing is a meter over real cost drivers, not a flat list: every interaction returns a usage record (tokens, audio-seconds or session length, image resolution and reference count, video length and resolution), and settlement covers true cost first. The fee is taken once on inbound value and capped so compute and fan-credit obligations stay whole. Predictable actions are quoted up front; variable or session actions run against a pre-authorized hold and settle the actual amount. Fans see credits or a pass, never tokens; prepaid credits are the fan's until spent.
 
 ## The public page and naming
 
