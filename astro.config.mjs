@@ -133,6 +133,8 @@ export default defineConfig({
 						{ label: 'FAQ', slug: 'faq' },
 						{ label: 'Whitepaper', slug: 'whitepaper' },
 						{ label: 'How It Works', slug: 'how-it-works' },
+						{ label: 'Ownership and the aNFT', slug: 'ownership-and-anft' },
+						{ label: 'Survival Model', slug: 'survival-model' },
 						{ label: 'Endowments and Creator Earnings', slug: 'endowments-and-creator-earnings' },
 						{ label: 'If XEL Disappears', slug: 'if-xel-disappears' },
 					],

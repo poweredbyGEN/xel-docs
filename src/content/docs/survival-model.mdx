@@ -1,0 +1,101 @@
+---
+title: "Survival Model"
+description: "How XEL keeps a character alive, what can fail, and why the permanence claim is mechanically grounded."
+---
+
+# Survival Model
+
+XEL's permanence claim rests on a simple idea: a character should not depend on a person, company, or platform remembering to pay a bill. It should carry its own fund, know what it costs to survive, and renew the pieces that would otherwise expire.
+
+This is not a guarantee that nothing can ever go wrong. It is a design for making survival explicit, funded, measurable, and recoverable.
+
+## The core loop
+
+A character survives through a repeating cycle:
+
+1. The character has an endowment: principal held in a stable denomination.
+2. That principal earns yield.
+3. A permissionless heartbeat checks what the character needs.
+4. Core storage is renewed before it reaches its deadline.
+5. Provider and upkeep costs are paid at cost.
+6. Surplus compounds back into the character or funds interaction.
+7. The character publishes whether it is self-sustaining, short, or dormant.
+
+The important shift is that survival becomes a visible process, not a subscription hidden inside a company's billing system.
+
+## What must stay paid
+
+The most important bill is storage. A character's identity is anchored on-chain, but its memory, persona, media, and source material live in decentralized storage. That storage is durable, but it is not free forever. It is paid for a duration and then extended.
+
+So the survival loop is deadline-driven. It does not renew on a vague calendar, and it does not wait until the final moment. It reads remaining storage runway and renews before a safety margin is crossed. A missed cycle should leave time to retry.
+
+This is the difference between "we hope someone renews it" and "the character can see its own deadline and act before it arrives."
+
+## Why stable funding matters
+
+The survival fund is held in a stable denomination because the bills are effectively stable-denominated. If the survival path depended on a volatile token, a market drop could cut the character's runway exactly when a renewal is due.
+
+Higher-risk yield can exist as an owner choice for surplus funds, but it should not be the default survival path. The default is intentionally boring: stable principal, conservative yield, fast withdrawal, enough liquidity to pay renewal deadlines.
+
+The goal is not to chase the highest headline rate. The goal is to make the math honest.
+
+## The reserve floor
+
+The keep-alive reserve is the protected floor. Automatic spending and owner withdrawals cannot cross it. That means a creator can withdraw surplus, but cannot accidentally cash out the funds that make the character survive.
+
+The reserve is not just a number set once at creation. It responds to conditions:
+
+- If realized yield falls, the amount needed to survive rises.
+- If storage costs rise, the amount needed to survive rises.
+- If fans have prepaid credits, that liability is protected until the credits are spent or refunded.
+- If conditions improve, the floor can ease only conservatively.
+
+This is why the character measures itself continuously. "Funded forever" is not a mint-day slogan; it is a current health state.
+
+## The buckets
+
+The endowment is split into purpose-bound balances:
+
+- **Keep-alive:** core existence, storage, and renewal.
+- **Storage:** larger media, extra memories, and non-core assets.
+- **Interaction:** inference, voice, image, video, and other active use.
+
+The buckets cannot drain one another. A viral day of interaction can exhaust the interaction budget without touching the keep-alive reserve. A storage shortfall can pause new saves without taking the character offline. Isolation is what makes failure graceful instead of catastrophic.
+
+## What happens in each condition
+
+**Newly funded:** the character fills a small liquid buffer, puts the rest to work, and reports whether the endowment is enough to cover survival at current assumptions.
+
+**Healthy and quiet:** yield covers storage and upkeep. The character stays alive even if nobody talks to it.
+
+**Popular:** paid interaction covers its own compute cost first, then the earned remainder can strengthen the endowment. Attention becomes permanence.
+
+**Yield drops:** the required reserve rises. Interaction is squeezed before survival. The character may talk less, but it defends the memory and identity first.
+
+**Storage cost rises:** the character recomputes the required principal and reports the shortfall instead of pretending the old estimate still holds.
+
+**Underfunded:** the character degrades visibly. Interaction can pause, new storage can pause, and the character can go dormant, but it remains owned and recoverable while its core substrate remains paid.
+
+**Deep neglect:** if the endowment is empty and nobody tops it up long enough for core storage to lapse, the substrate can be lost. XEL is explicit about this because permanence without funding is not real.
+
+## Why a company is not the survival path
+
+XEL can run helpful defaults: hosted pages, provider routing, a free tier, payment facilitators, and friendly handles. None of those are the thing that keeps a funded character alive.
+
+The survival path is:
+
+- owned object;
+- encrypted decentralized storage;
+- self-funded endowment;
+- permissionless heartbeat;
+- replaceable providers;
+- public health state.
+
+If the company disappears, a funded character should lose convenience, not ownership, memory, or the ability to be served by another provider.
+
+## What users should believe
+
+The honest claim is not "nothing can ever fail." The honest claim is:
+
+XEL turns permanence from a platform promise into a set of public mechanisms: owned authority, encrypted storage, self-funding, early renewal, protected reserves, and graceful dormancy. A character that is funded or valued has a path to keep itself alive. A character that falls short shows the shortfall and can be revived.
+

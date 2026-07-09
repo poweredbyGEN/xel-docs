@@ -14,7 +14,7 @@ npm run preview
 `npm run update:whitepaper` regenerates `src/content/docs/whitepaper.md` from:
 
 ```text
-/root/mac/Downloads/people-that-live-forever-whitepaper_1.md
+/root/mac/Downloads/people-that-live-forever-whitepaper.md
 ```
 
 Override the source with:

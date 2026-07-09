@@ -5,16 +5,15 @@ description: "Canonical schemas, modules, invariants, events, and API surfaces."
 
 # Reference
 
-Look things up. Rendered from the build spec, which is the source of truth, so it never drifts.
+Look things up. This page is the public map of the technical surfaces that matter for understanding and integrating with XEL.
 
-- Capability schemas: inference.v1, ingestion.v1, retrieval.v1, treasury.v1, distillation.v1, voice.v1, image.v1, video.v1, full request and response.
-- Move modules: every on-chain module, its types, and its public functions.
-- The aNFT object: every field, its meaning, and its mutability.
-- Invariants: the full enforced list, each with the guarantee it provides.
-- Error codes: the consolidated table.
-- Events: every emitted event and when it fires.
+- Capability families: inference, ingestion, retrieval, treasury, distillation, voice, image, and video.
+- On-chain surfaces: identity, authority, guardians, treasury policy, payment policy, storage policy, lineage, and migration.
+- The aNFT object: what it owns, what it points to, and what remains immutable.
+- Invariants: the public guarantees each subsystem must preserve.
+- Events: the public receipts and status changes indexers and clients can explain to users.
 - Payment modes: up-to, exact, and hold, and when each applies.
-- The usage record: every metered dimension by modality.
+- The usage record: metered dimensions by modality, summarized for quoting and settlement.
 - Glossary: every term, one line each.
 - Client API: the reference client methods, once the SDK surface is finalized.
 

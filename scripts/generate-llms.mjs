@@ -9,6 +9,8 @@ const orderedDocs = [
   ['FAQ', 'faq.mdx'],
   ['Whitepaper', 'whitepaper.md'],
   ['How It Works', 'how-it-works.mdx'],
+  ['Ownership and the aNFT', 'ownership-and-anft.mdx'],
+  ['Survival Model', 'survival-model.mdx'],
   ['Endowments and Creator Earnings', 'endowments-and-creator-earnings.mdx'],
   ['If XEL Disappears', 'if-xel-disappears.mdx'],
   ['Concepts', 'concepts.mdx'],
