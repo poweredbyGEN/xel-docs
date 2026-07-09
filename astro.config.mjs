@@ -18,6 +18,15 @@ export default defineConfig({
 				replacesTitle: true,
 			},
 			head: [
+				// Google Analytics 4 (gtag.js) — G-N622WKW3HZ
+				{
+					tag: 'script',
+					attrs: { async: true, src: 'https://www.googletagmanager.com/gtag/js?id=G-N622WKW3HZ' },
+				},
+				{
+					tag: 'script',
+					content: `window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-N622WKW3HZ');`,
+				},
 				{
 					tag: 'script',
 					content: `try { localStorage.setItem('starlight-theme', 'light'); document.documentElement.dataset.theme = 'light'; } catch {}`,
