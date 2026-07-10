@@ -22,9 +22,11 @@ required_to_activate = $5 credits or equivalent crypto funding
 
 This is an activation buffer, not a permanence promise.
 
-## First-Pass Cost Buckets
+## First-Pass Cost Categories
 
-| Bucket | What it covers | Initial estimate |
+These are the cost *categories* the single balance pays for, not separate funds to allocate.
+
+| Cost category | What it covers | Initial estimate |
 |---|---|---|
 | Sui mint and policy transactions | aNFT mint, Proof of Genesis, wallet/policy refs, package calls. | Usually cents-level; budget `$0.05-$0.25` until measured on testnet/mainnet. |
 | Walrus public media and encrypted artifacts | Avatar, public media refs, videos, persona artifact, memory checkpoints, manifests. | Official storage pricing is `$0.023/GB/month` before app-specific overhead and gas. |
@@ -44,16 +46,18 @@ Use `$5` as the first activation threshold because it comfortably covers:
 
 Do not promise that `$5` keeps the XEL object alive forever. The UI should say how much runway remains.
 
-The permanence model is separate from this activation buffer. Long-lived characters should be funded with a stablecoin endowment whose survival path is held in a stable denomination, not a volatile token, and whose yield venue can withdraw quickly enough to renew storage before its deadline. The current whitepaper sizes permanence from realized net-of-fee yield and current storage price, then recomputes that requirement every cycle.
+The permanence model is separate from this activation buffer. Long-lived characters hold a single stablecoin balance whose survival path is held in a stable denomination, not a volatile token, and — if the owner opts into staking — whose yield venue can withdraw quickly enough to renew storage before its deadline. The current whitepaper sizes permanence from realized net-of-fee yield and current storage price, then recomputes that requirement every cycle.
+
+There is one balance, not a set of allocations. It pays for everything — interactions and survival alike — spent first-in first-out. Staking is optional and off by default; when it is on, yield on the staked portion flows back into that same balance. The only protected amount is the ring-fenced unspent fan-credit liability (fan money stays the fan's until it is spent); there is no other reserve floor, and the owner may withdraw everything.
 
 ## Runway Formula
 
-For the first implementation:
+For the first implementation, runway is computed from the one balance:
 
 ```text
-available_runtime_balance = sum(reconciled funding balances allocated to runtime/storage)
+available_balance = reconciled character balance, minus unspent fan-credit liability
 daily_burn_estimate = storage_daily_estimate + hosting_daily_estimate + baseline_inference_daily_estimate
-runway_seconds = floor((available_runtime_balance / daily_burn_estimate) * 86400)
+runway_seconds = floor((available_balance / daily_burn_estimate) * 86400)
 ```
 
 Default demo values:
