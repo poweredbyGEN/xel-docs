@@ -40,16 +40,16 @@ Yes. You name guardians (an M-of-N set) who can run a recovery and succession fl
 ## Permanence and funding
 
 **How does a character "live forever"?**
-Each character has an endowment, its own wallet holding a principal that earns yield. A permissionless heartbeat checks storage runway, renews before expiry, and pays the character's running costs. Funded well, a character covers its own keep-alive from yield and never touches principal, so it can persist without anyone paying a bill. See Survival Model for the full mechanism.
+Each character has an endowment: one balance in its own wallet that pays for everything, spent first-in first-out. A permissionless heartbeat checks storage runway, renews before expiry (keeping about six months prepaid ahead), and pays the character's running costs. Staking is optional and off by default; an owner who turns it on lets the staked portion earn yield that flows back into the same balance, so the character covers its own survival from yield and can persist without anyone paying a bill. See Survival Model for the full mechanism.
 
 **Is "forever" guaranteed?**
 No, and we are careful not to claim it is. Yield is not guaranteed; it can be low or zero for stretches. What the design guarantees is honest behavior under scarcity: a character is self-sustaining when funded or popular, goes dormant-but-recoverable when neither, and is only truly lost if its substrate goes unfunded long enough to be dropped. "Forever" is a property the design converges to when funded, not an unconditional promise.
 
 **How much does it cost to keep a character alive?**
-For a quiet character living on yield alone, the recurring burn is dominated by encrypted storage plus the heartbeat's small costs, on the order of low tens of dollars a year. As a rough, deliberately conservative example: covering about $20/year of burn from yield at 4% net needs an endowment around $500. At zero yield, that same $500 still funds many years of drawdown. Any real paid interaction makes the principal grow rather than shrink. These are illustrative numbers; all inputs vary.
+For a quiet character, the recurring burn is dominated by encrypted storage plus the heartbeat's small costs, on the order of low tens of dollars a year. As a rough, deliberately conservative example: to cover about $20/year of burn from staked yield at 4% net, the staked balance needs to be around $500. If you never stake, that same $500 balance simply spends down and still funds many years of drawdown. Any real paid interaction makes the balance grow rather than shrink. These are illustrative numbers; all inputs vary.
 
 **What is the protocol fee?**
-A disclosed fee targeting around 10 percent on value entering the character, never on value leaving. That means interaction credit purchases, tips, donations, and harvested yield can carry the fee once on arrival. Keep-alive renewal itself is charged at cost and never marked up, principal is never touched, and self-routing to your own providers avoids the routing fee.
+A disclosed fee targeting around 10 percent on value entering the character, never on value leaving. That means interaction credit purchases, tips, contributions, and harvested yield can carry the fee once on arrival. Storage renewal itself is charged at cost and never marked up, the owner can still withdraw the whole balance (only unspent fan credits are protected), and self-routing to your own providers avoids the routing fee.
 
 **Does XEL have a token? Do I need it?**
 A character's survival never depends on a token. Everything in the operating path is denominated in stablecoins. A token exists only for commons-funding and governance concerns, entirely outside the path that keeps a character alive.

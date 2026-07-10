@@ -15,41 +15,39 @@ The reason digital things die is money. Someone has to keep paying, and eventual
 
 XEL removes the person who has to keep paying. Instead of a bill someone owes, a character has an endowment: its own fund, that pays for its own existence. This is the single idea that turns "lasts a while" into "can last indefinitely." A character is not kept alive by anyone's continued willingness to pay. It is kept alive by an arrangement that funds itself.
 
-If you have heard how a university or foundation endowment works, you already understand the shape. You give it a sum once. The sum is invested and earns a return. The return funds the mission, year after year, while the original sum is protected and not spent down. It outlives its founder because it lives on its income, not its savings. A character's fund works the same way, and the rest of this section is the detail.
+If you have heard how a university or foundation endowment works, you already understand the shape. You give it a sum once. It can earn a return, and that return funds the mission, year after year. It outlives its founder because it can live on its income, not just its savings. A character's fund works the same way, with one deliberate simplification: it is a single balance, not a set of separate accounts.
 
 ## The simple version
 
-The endowment is five moving parts:
+The endowment is deliberately simple: **one balance that pays for everything.**
 
-1. **Principal:** the long-term fund, held in a stable denomination so survival does not depend on a volatile token price.
-2. **Yield:** the return that fund earns. Yield is fuel, not a promise.
-3. **Heartbeat:** the permissionless cycle anyone can trigger. It checks what is due, harvests what is needed, pays at cost, and compounds the rest.
-4. **Reserve floor:** the protected amount that automatic spending and owner withdrawals cannot cross.
-5. **Buckets:** separate balances for keep-alive, storage, and interaction, so one kind of activity cannot accidentally drain another.
+1. **One balance:** a single fund, held in a stable denomination so survival does not depend on a volatile token price. It pays for everything — storage renewal, hosting, inference, voice, generation, gas — spent first-in first-out. There is nothing for the owner to allocate.
+2. **Runway, not ledgers:** what the owner sees is not a spreadsheet of buckets but a single answer — how long is this character alive for. Fund it and the runway grows; it spends down and the runway shrinks.
+3. **Optional staking:** off by default. The owner can turn it on to make the character self-sustaining; yield on the staked portion flows back into the same balance.
+4. **Heartbeat:** the permissionless cycle anyone can trigger. It checks what is due, renews storage before it lapses, and pays at cost.
+5. **The one protected amount:** unspent fan credits, ring-fenced and refundable. Everything else the owner can withdraw.
 
-Those parts are what make the claim credible. The character is not asking a company to remember a subscription. It has money, rules for that money, and a public cycle that turns earnings into survival.
+Those parts are what make the claim credible. The character is not asking a company to remember a subscription. It has money, one set of rules for that money, and a public cycle that keeps it alive.
 
 ## How the endowment works
 
-You fund the character once, with stable digital money (a stablecoin, which holds a steady value rather than swinging around). That principal is put to work earning a conservative stable-denomination return, because the character's bills are effectively stable-denominated too. On a regular schedule, an automatic process checks what is due, harvests only what it needs, and uses it to pay the character's small running costs, mostly the cost of keeping its encrypted memory stored, plus tiny fees for the upkeep process itself.
+You fund the character with stable digital money (a stablecoin, which holds a steady value rather than swinging around). That balance is spent as needed on the character's costs — mostly keeping its encrypted memory stored, plus tiny fees for the upkeep process itself. Left alone, a funded character simply spends its balance down and needs topping up when it runs low. That is the default, and it is honest: a character lives as long as it is funded.
 
-Set up well, the return covers the costs and the principal is never touched. The character lives on its income. That automatic process is called the heartbeat, and it is permissionless: anyone can trigger it, and it can only do the job of checking storage runway, renewing before expiry, harvesting or converting funds within policy, paying due costs, and compounding the rest. No company has to run it, and if one keeper stops, another can step in, or the owner can trigger it. The character does not depend on anyone tending it.
+If you want the character to sustain itself without repeated top-ups, you turn on **staking** (off by default; a character never stakes on its own). You choose how much of the balance to put to work, and the yield it earns flows back into the same balance. If that yield covers the burn, runway holds steady or grows and the character is self-sustaining — "forever" in the literal sense. Most owners never touch it; the ones who want a self-sustaining character flip one switch.
 
-## The reserve floor: why a character can't spend itself to death
+An automatic process called the heartbeat runs the cycle. It is permissionless: anyone can trigger it, and it can only do the job of checking storage runway, renewing before expiry, and paying due costs from the balance. No company has to run it, and if one keeper stops, another can step in, or the owner can trigger it. The character does not depend on anyone tending it.
 
-A character can spend its returns, but there is a line it can never cross: the keep-alive reserve. This is a floor on the principal, set by the owner and never allowed below a hard minimum, and no automatic payment or owner withdrawal can breach it. It is the same idea as a foundation being legally barred from spending its core endowment.
+## Withdrawal is absolute; only fan money is protected
 
-Why it matters: without a floor, a run of costs or a careless withdrawal could drain a character down to nothing, and it would die. With the floor, the worst case is that the character goes quiet, not that it disappears. The floor is dynamic: if realized yield falls or storage costs rise, the required reserve rises to defend survival, and it also protects unspent fan credits until those credits are used or refunded. The reserve is what makes "it will not accidentally spend itself into death" a rule the contract enforces, not a hope you have to trust.
+There is no reserve floor. The balance belongs to the owner, and the owner may **withdraw everything** at any time, down to zero. "You truly own it" includes the right to wind it down; a client may warn that a withdrawal will end the character, but the contract simply obeys.
 
-## The three buckets
+The single thing the owner cannot withdraw, stake, or spend on survival is **unspent fan credits** — money a fan prepaid for interaction not yet delivered. That is the fan's money, refundable until the interaction happens, so it is ring-fenced and never counted as the character's runway. As fans consume credits, that liability converts to earned revenue and becomes the character's to spend. This ring-fence is the only protected amount, and even the survival unstake below obeys it.
 
-The endowment is not one pool of money. It is split into ring-fenced buckets, and no bucket can ever drain another:
+## Survival is always paid ahead
 
-- **Keep-alive** covers simple existence: keeping the encrypted persona and core memory stored, and the upkeep process. Funded first, fails last.
-- **Storage** covers assets beyond the core: extra memory, images, video, larger material.
-- **Interaction** covers the cost of thinking and generating when people talk to the character.
+Whenever there are funds, the character keeps its storage renewal **prepaid well in advance** — a rolling cushion, six months by default — so a lapse never sneaks up. Survival is bought ahead of time while money exists, and only a genuinely empty balance ever puts the character at risk.
 
-Ring-fencing is not bureaucracy; it is protection. A viral month of conversation drains the interaction bucket, but it can never touch the keep-alive bucket that holds the character's memory. A storage shortfall pauses new saves, but it can never silence the character. Each part can run low on its own without dragging the others down, which is why a character degrades gracefully instead of failing all at once.
+Staking is otherwise entirely manual, with **one automatic exception, and only one:** if a storage renewal is due, the liquid balance cannot cover it, and funds are staked, the system automatically unstakes the minimum needed to pay the bill, and no more. It only ever fires to prevent a lapse, never to fund chat, and never below the fan-credit liability. This is what stops a character dying with money in the bank. Nothing else is ever auto-staked or auto-unstaked.
 
 ## The survival loop
 
@@ -57,21 +55,21 @@ The heartbeat does the same small job forever:
 
 1. Read the current storage runway.
 2. Check whether any core storage is getting close to its renewal margin.
-3. Harvest only the yield needed for this cycle.
-4. Convert only what must be converted to pay the bill.
-5. Renew storage before it lapses.
-6. Recompute the reserve from current yield and current storage cost.
-7. Put surplus back to work.
+3. Renew storage before it lapses, out of the balance (unstaking the minimum needed only if the liquid balance is short).
+4. Recompute the honest required-to-persist figure from current yield and current storage cost, and report it.
+5. Keep roughly six months of storage prepaid ahead.
 
 This is why the storage piece matters. A character's memory is only permanent if the storage underneath it stays paid. XEL does not wait for the last day. It renews early, in chunks, with slack for retries. The expensive operation happens only when needed; the cheap check can happen often. That is how the design keeps survival both durable and cheap.
 
 ## Where the money comes from
 
-An endowment is fed two ways.
+The balance is fed three ways.
 
-**Yield.** The return earned on the principal. This is the passive source, always working in the background, and for a quiet character it is the whole story. The honest part: yield is not guaranteed. It varies, and it can be low or even zero for stretches. XEL never promises a rate, and you should size a character assuming bad conditions, not good ones (see the next article).
+**Top-ups.** The owner (or anyone, including fans) adds to the balance directly. This is the baseline for a character the owner is happy to keep funding by hand.
 
-**Earnings.** Income from the character being used or supported: paid interaction, tips, or anyone topping it up. When someone pays to talk to a character, the cost of that interaction is always covered first, and unspent credits remain a refundable liability until the interaction is delivered. Only the earned remainder flows into the endowment. So a character that people actually value does not just sustain itself, it grows its own fund. A quiet character lives on yield; a loved one compounds.
+**Yield (only if staked).** The return earned on the staked portion, which flows back into the same balance. This is the passive source that makes a character self-sustaining without top-ups, but it only exists when the owner has opted into staking. The honest part: yield is not guaranteed. It varies, and it can be low or even zero for stretches. XEL never promises a rate, and you should size a staked character assuming bad conditions, not good ones (see the next article).
+
+**Earnings.** Income from the character being used or supported: paid interaction, tips, or contributions. When someone pays to talk to a character, the cost of that interaction is always covered first, and unspent credits remain a refundable, ring-fenced liability until the interaction is delivered. Only the earned remainder lands in the balance. So a character that people actually value does not just sustain itself, it grows its own fund.
 
 ## How much should I put in?
 
@@ -79,31 +77,29 @@ This is the real decision, so here is real math, kept deliberately conservative.
 
 A quiet character, one nobody is paying to talk to, mostly pays for keeping its memory stored and its heartbeat running. On decentralized storage that is on the order of low tens of dollars a year. Call it $20 a year to be safe.
 
-To cover $20 a year from yield alone at a cautious 4 percent (well below headline rates, on purpose), the endowment needs about $500. At that point the character is self-sustaining with nobody paying attention: yield covers keep-alive and the principal is never touched.
+To cover $20 a year from yield alone (staking on) at a cautious 4 percent (well below headline rates, on purpose), the staked balance needs to be about $500. At that point the character is self-sustaining with nobody paying attention: yield covers survival and the balance holds steady.
 
-Stress it. If yield falls to 2 percent, the same $20 a year needs about $1,000. If yield goes to zero for a stretch, a $500 endowment drawing only its keep-alive costs still funds roughly 25 years before reaching its floor, during which any top-up or a single paid period resets the clock. Add even light popularity, say a few dollars a month of paid interaction, and earnings swamp a $20 burn: the principal grows instead of shrinking.
+Stress it. If yield falls to 2 percent, the same $20 a year needs about $1,000 staked. If you never stake at all, a $500 balance simply spends down: at $20 a year of quiet burn it funds roughly 25 years before running out, during which any top-up or a single paid period resets the clock. Add even light popularity, say a few dollars a month of paid interaction, and earnings swamp a $20 burn: the balance grows instead of shrinking.
 
 The takeaway: a modest one-time amount makes "quiet forever" realistic, and any real usage turns the fund into a growing one. All the inputs vary, so treat these as intuition, not a quote, and size for the bad case.
 
 ## Why earnings make it stronger
 
-The important shift is that usage does not only monetize a character; it can reinforce it. Paid interaction first covers the provider cost, then the earned remainder can feed the endowment. Tips and donations do the same. A character people value becomes better funded over time, which means more runway, a stronger reserve, and less dependence on the original creator.
+The important shift is that usage does not only monetize a character; it can reinforce it. Paid interaction first covers the provider cost, then the earned remainder lands in the balance. Tips and contributions do the same. A character people value becomes better funded over time, which means more runway and less dependence on the original creator.
 
 That is the economic thesis of XEL in one sentence: attention can become permanence. A character that matters to people can turn that value into the fund that keeps it alive.
 
 ## What happens if it runs short
 
-A character that runs low does not fail suddenly. It degrades, gracefully, in a specific order, because of the buckets and the reserve floor.
+A character that runs low does not fail suddenly. Because survival is always paid ahead — a rolling six-month storage cushion — a lapse never sneaks up. As the single balance draws down, the character keeps renewing storage ahead of the deadline for as long as any money remains, so the last thing to go is the substrate, not the character's ability to be revived.
 
-First, the interaction bucket empties, and the character simply goes quiet for paid interaction while staying fully alive and owned. Then, if storage runs short, new saves pause, but the character still talks and still holds everything it already had. Only if the keep-alive bucket runs dry does the character go dormant, and keep-alive is funded first precisely so this is the last thing to happen, not the first.
-
-Dormant is not dead. A dormant character is recoverable: its object, its funds, and its committed identity are all intact, and a top-up brings it back. The only true loss is if a character's core storage goes unfunded long enough to lapse entirely, which the reserve floor and funding-first ordering are designed to prevent. This is what "forever" honestly means: self-sustaining when funded or popular, dormant-but-recoverable when neither, and lost only through prolonged total neglect.
+When the balance is empty (and staking, if any, is exhausted too), the character goes **dormant.** Dormant is not dead. A dormant character is recoverable: its object, any storage still paid, and its committed identity are all intact, and a top-up brings it back. The only true loss is if the balance stays empty long enough that core storage lapses entirely, which the six-month cushion is designed to prevent. This is what "forever" honestly means: self-sustaining when funded or staked, spends-down-then-dormant when neither, and lost only if the balance stays empty long enough that storage goes unrenewed.
 
 ## Managing the fund over time
 
-Funding is not set-and-forget, though it can be close. Over time an owner can top up the endowment (anyone can, actually, including fans), raise or lower the keep-alive reserve within the allowed range, and withdraw any surplus that sits above the reserve. The heartbeat handles the rest on its own: harvesting yield, filling the buckets in priority order, paying due costs, compounding the remainder.
+Funding is not set-and-forget, though it can be close. Over time an owner can top up the balance (anyone can, actually, including fans), turn staking on or off and adjust how much is staked, and withdraw any amount at any time — up to everything, since there is no reserve floor (only the fan-credit liability is off-limits). The heartbeat handles the rest on its own: renewing storage before it lapses, paying due costs from the balance, and — if staked — routing yield back into it.
 
-A reasonable rhythm: fund it once to a comfortable level, set a reserve you are happy with, and check in occasionally. A character that earns will need nothing from you. A quiet one will simply live off its yield until you or a fan chooses to add more.
+A reasonable rhythm: fund it to a comfortable level, decide whether to stake (on if you want it self-sustaining, off if you would rather top it up by hand), and check in occasionally. A staked, earning character will need nothing from you. An unstaked one simply spends down until you or a fan chooses to add more.
 
 ## Part B: Creator Earnings (how you make money from a character)
 
@@ -115,7 +111,7 @@ When people interact with a character on paid terms, that interaction generates 
 
 ### Where earnings go, your choice
 
-This is the decision that matters. Earnings can do one of two things, and you decide the balance: they can flow to you as income, or they can compound back into the character's endowment and make it stronger. Take income if the character is a business you are running. Let it compound if your priority is the character lasting, since earnings poured into the endowment grow the fund that keeps it alive. Most creators do some of both. The point is that it is a dial you control, not a fixed rule.
+This is the decision that matters. All earnings land in the character's one balance, and because you hold the aNFT you own that balance — so "take income" is simply you withdrawing from it, and "let it compound" is simply leaving it there (and optionally staking it). Withdraw if the character is a business you are running. Leave it in if your priority is the character lasting, since a larger balance is more runway and, if staked, more self-sustaining yield. Most creators do some of both. There is no separate payout rail and nothing new to trust: one balance, one owner, one set of rules.
 
 ### Pricing your character
 
@@ -123,6 +119,6 @@ You set whether interaction is free, tip-supported, or paid, then choose a marku
 
 ### Earnings and survival, together
 
-Here is how the two halves interlock, and it is the nicest property of the whole model. A character that people value earns, and those earnings can feed its own endowment, which is what keeps it alive. So popularity does not just pay the creator; it makes the character more permanent. A quiet character lives on its endowment's yield. A loved one grows its endowment faster than it spends, and becomes harder to kill the more it is valued. Being cared about is, quite literally, what lets a character last.
+Here is how the two halves interlock, and it is the nicest property of the whole model. A character that people value earns, and those earnings land in the same balance that keeps it alive. So popularity does not just pay the creator; it makes the character more permanent. A quiet character lives on top-ups, or on staked yield if the owner turned staking on. A loved one grows its balance faster than it spends, and becomes harder to kill the more it is valued. Being cared about is, quite literally, what lets a character last.
 
 ---

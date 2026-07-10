@@ -92,22 +92,28 @@ wallets for different rails or networks, but the wallet must be dedicated to tha
 quote, public profile, or discovery file must not point users or agents at a shared XEL deposit
 address unless the address is clearly labeled as a treasury destination rather than a receive wallet.
 
-Recommended first-pass contribution wallet set:
+There is one balance, not a set of purpose-bound funds. The endowment is deliberately simple: a single
+balance pays for everything — storage renewal, inference, keep-alive, and gas alike — spent first-in
+first-out. There are no separate storage/runtime/endowment allocations for a contributor to choose
+between, and nothing for the owner to allocate. What a character exposes across chains is receive
+endpoints, not budgets:
 
-| Wallet | Purpose | Default allocation |
+| Wallet | Role | Where funds go |
 |---|---|---|
-| Storage renewal wallet | Funds Walrus, Walrus Sites, Seal retention, and renewal. | Storage reserve |
-| Inference/runtime wallet | Funds runtime providers, inference, retrieval, and GEN/provider work. | Runtime balance |
-| Treasury/endowment wallet | Funds long-term principal, staking/yield, and survival runway. | Endowment principal |
+| Per-chain receive wallet | Accepts contributions on each supported rail (Base, Solana, Sui). Receive-only. | Auto-sweeps into the primary balance. |
+| Primary balance wallet | Holds the character's single balance on the home chain; optionally staked. | Spent FIFO for all costs; yield (if staked) flows back in. |
 
-Rails are separate from these wallet purposes. A character can accept x402 on Base, Solana, or Sui,
-but the default public contribution model still exposes three purpose-bound receive wallets per XEL
-object.
+Rails are separate from this. A character can accept x402 on Base, Solana, or Sui; the other chains'
+wallets are receive-only and auto-sweep into the one primary balance, where value concentrates and
+(if the owner opts in) is staked.
 
-Whitepaper-aligned accounting treats fan credit purchases differently from donations and tips.
+Whitepaper-aligned accounting treats fan credit purchases differently from contributions and tips.
 Purchased credits are an unearned liability until the interaction is delivered; they must remain
-refundable and protected by the reserve floor. Donations, tips, and earned interaction margin can
-enter the character's own endowment after the disclosed inflow fee.
+refundable and ring-fenced — the single protected amount, never counted as the character's runway
+or spent on its survival. Contributions, tips, and earned interaction margin enter the character's
+own balance at full value (the protocol takes no fee on any deposit; it earns downstream on yield
+and interaction). There is no other reserve floor: the owner may withdraw everything except the
+outstanding fan-credit liability.
 
 Dedicated funding wallets are receive endpoints only. Spend authority remains controlled by owner,
 delegate, treasury, and spend policy. A receive wallet can be swept into a master treasury or owner
@@ -184,8 +190,8 @@ Recommended ledger event types:
 |---|---|
 | `funding_received` | Funds entered the character treasury or provider-managed balance. |
 | `contribution_observed` | A tip, paid interaction payment, storage funding, runtime funding, or endowment contribution was detected. |
-| `contribution_verified` | The contribution settled and was assigned to a wallet purpose/allocation. |
-| `endowment_created` | Owner funded a longer-lived reserve for the character. |
+| `contribution_verified` | The contribution settled and entered the character's single balance (or, for a fan credit purchase, the ring-fenced credit liability). |
+| `endowment_created` | Owner funded the character's balance for long-lived survival. |
 | `payment_authorized` | Owner or delegate authorized a typed payment intent. |
 | `payment_settled` | Provider or chain execution completed a payment. |
 | `payment_failed` | Execution failed with a reason and retry policy. |
@@ -291,15 +297,15 @@ obligations, oracle values, and treasury policy state.
 
 Phase 2 should cover:
 
-- storage renewal reserves for Walrus-style public assets, encrypted persona artifacts, memory checkpoints, and provenance bundles
-- owner-configured stablecoin endowment for long-lived character hosting or preservation
-- survival principal in a stable-denomination yield venue with fast withdrawal, not a volatile-token
-  staking default
-- deadline-driven storage renewal that reads blob runway and extends before the safety margin lapses
-- dynamic reserve accounting separate from operational spend balance, recomputed from realized
-  net-of-fee yield and current storage price
+- storage renewal paid from the single balance for Walrus-style public assets, encrypted persona artifacts, memory checkpoints, and provenance bundles
+- owner-configured stablecoin balance for long-lived character hosting or preservation
+- survival funds held in a stable denomination with fast withdrawal, not a volatile-token
+  staking default; staking is opt-in and off by default
+- deadline-driven storage renewal that reads blob runway and extends before the safety margin lapses, keeping roughly six months prepaid ahead
+- an honest required-to-persist figure recomputed from realized net-of-fee yield and current storage
+  price, reported as guidance rather than enforced as a floor (the owner may withdraw everything but the fan-credit liability)
 - renewal warnings and renewal intents surfaced through XEL.xyz, GEN, or third-party providers
-- policy for what happens when storage renewal funds run low
+- policy for what happens when the balance runs low
 
 ### Phase 3: Auto-Sweep, Gas Sponsorship, and Revenue Routing
 
@@ -310,7 +316,7 @@ Phase 3 should cover:
 - per-chain gas sponsorship using the native chain pattern, reimbursed atomically at cost from the
   swept or operating asset rather than pre-seeding gas into every receive wallet
 - creator, owner, provider, protocol, royalty, or affiliate splits where policy allows them
-- minimum retained balance for storage renewal and runtime availability
+- the fan-credit ring-fence kept liquid and refundable (the one protected amount)
 - sweep cadence, destination, asset, fee, and receipt metadata
 - owner controls to pause or adjust sweep policy
 
@@ -320,10 +326,10 @@ Phase 4 should cover:
 
 - staking venue allowlists and risk labels
 - owner-approved stablecoin lending, staking, and unstaking intents
-- auto-yield rules that supply or route excess treasury only after minimum runtime/storage reserves,
-  unspent fan-credit liabilities, and the dynamic keep-alive floor are met
-- claim-yield rules that harvest rewards above a threshold and route them into runtime, storage, treasury,
-  or endowment balances
+- opt-in staking of the balance (off by default; never automatic), with the survival-only auto-unstake
+  that fires solely to pay a due storage renewal when the liquid balance is short, never below the
+  fan-credit liability
+- claim-yield rules that harvest rewards and route them back into the single balance
 - swap policy with asset allowlist, venue allowlist, per-swap limit, daily limit, and max slippage
 - treasury rebalancing across assets, wallets, rails, or venues
 - oracle or price-source requirements
@@ -344,23 +350,25 @@ staking/swap venue bindings, failure handling, and reconciliation are implemente
 The product should expose an estimated life/runway calculation from ledger state:
 
 ```text
+available_balance = reconciled character balance, minus unspent fan-credit liability
 daily_burn = daily_runtime_cost + daily_storage_cost
-daily_yield = endowment_principal * annual_yield * claim_efficiency / 365
+daily_yield = staked_portion * annual_yield * claim_efficiency / 365   # zero unless staking is on
 net_daily_burn = max(0, daily_burn - daily_yield)
-estimated_life = (runtime_balance + storage_balance + spendable_principal) / net_daily_burn
+estimated_life = available_balance / net_daily_burn
 ```
 
-If `daily_yield >= daily_burn`, the character is sustainable while yield remains above burn. This
-is still an estimate, not a promise, because yield, provider costs, storage renewal costs, and asset
-prices can change. The whitepaper's survival loop improves on this estimate by recomputing the
-required-to-persist value from realized net-of-fee yield and current storage price every cycle, then
-raising the reserve floor protectively when conditions worsen.
+If staking is on and `daily_yield >= daily_burn`, the character is sustainable while yield remains
+above burn. This is still an estimate, not a promise, because yield, provider costs, storage renewal
+costs, and asset prices can change. The whitepaper's survival loop improves on this estimate by
+recomputing the required-to-persist value from realized net-of-fee yield and current storage price
+every cycle, then reporting the shortfall honestly (as guidance, not an enforced floor) when
+conditions worsen.
 
-The reference runtime can derive these inputs from reconciled character wallet balances:
-`inference_runtime` maps to runtime balance, `storage_renewal` maps to storage balance, and
-`treasury_endowment` maps to endowment principal. Burn assumptions can be split into runtime,
-storage, inference, and hosting components so testnet examples are explicit about what is being
-estimated.
+The reference runtime derives these inputs from the reconciled character balance. There is a single
+balance that funds runtime, storage, inference, and hosting alike; burn can be broken into those
+components for reporting so testnet examples are explicit about what is being estimated, but they
+draw from one balance, not separate allocations. Yield is nonzero only for the staked portion when
+the owner has opted into staking.
 
 ## Provider Discovery Metadata
 

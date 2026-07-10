@@ -27,11 +27,13 @@ Put together: you hold the character, the character holds its own money and poin
 
 The endowment is the part that makes XEL different from a normal AI character. A normal digital character survives while someone keeps paying a bill. A XEL is designed to carry its own fund, earn from that fund, and use the earnings to pay the small costs of staying alive.
 
-The fund is held in a stable denomination, not a token whose price has to go up for the character to survive. Its main job is boring on purpose: earn a conservative return, keep the encrypted memory paid for, and renew storage before it expires. When a renewal is due, a permissionless heartbeat checks the character's storage runway, harvests what is needed, converts only what must be converted, pays the bill, and compounds what remains.
+There is just **one balance**, and it pays for everything — chatting and staying alive alike. There are no separate budgets to manage. You fund the character, it spends from that one balance, and what you see is not a spreadsheet of buckets but a single answer: how long is this character alive for. The fund is held in a stable denomination, not a token whose price has to go up for the character to survive. Its main job is boring on purpose: keep the encrypted memory paid for, and renew storage before it expires, always keeping about six months prepaid ahead so a lapse never sneaks up.
 
-There are guardrails around that money. The keep-alive reserve is the floor that cannot be withdrawn past. Interaction money and fan credits are tracked separately so a busy month of chatting cannot drain the survival fund, and prepaid credits stay refundable until the promised interaction is delivered. If conditions get worse, yield drops or storage costs rise, the required reserve rises with them. The character measures its own survival instead of relying on a launch-day estimate.
+Staking is **optional and off by default.** A character never stakes on its own. An owner who wants it to sustain itself flips one switch, choosing how much of the balance to put to work; the yield it earns flows back into that same balance and extends its life without repeated top-ups. The only move the system ever makes automatically is a survival one: if a storage renewal is due and the liquid balance is short, it unstakes the minimum needed to pay the bill, and nothing more.
 
-So the promise is not "magic forever." It is much stronger than that: a funded character has a mechanical path to keep paying its own way, and if it ever falls short, it degrades visibly and recoverably instead of being silently deleted.
+The owner can withdraw everything, down to zero — you truly own it, which includes the right to wind it down. The one thing kept separate is fan money: credits a fan has prepaid but not yet used stay the fan's, ring-fenced and refundable, never counted as the character's runway or spent on its survival. The character also measures its own survival continuously instead of relying on a launch-day estimate.
+
+So the promise is not "magic forever." It is much stronger than that: a funded or staked character has a mechanical path to keep paying its own way, and if it ever falls short, it degrades visibly and recoverably instead of being silently deleted.
 
 ## It lives in your wallet
 

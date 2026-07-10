@@ -26,6 +26,8 @@ plus `finalize_recovery_and_transfer`.
 - Current package owner: immutable. The UpgradeCap was deleted by `0x2::package::make_immutable`.
 - Modules: `identity`, `authority`, `access_mgmt`, `registry`, `breaker`, `treasury`, `wallets`, `payment`, `guardian`, `lineage`, `storage_policy`
 
+> Historical note: this is an earlier, immutable testnet package that implemented a multi-allocation "waterfall." The current whitepaper model is single-fund (one balance for everything, optional staking, only the fan-credit liability ring-fenced). The facts below describe what that frozen package contains, not the current endowment design.
+
 This package adds the contract-first Endowment Waterfall:
 
 - generic `Endowment<T>` with contract-held principal and ring-fenced keep-alive, storage, and
@@ -99,7 +101,7 @@ Lineage appends are owner-only in this package. Delegated lineage append needs a
 - Inference/runtime wallet ref: `sui:inference-runtime:mira-chutes-test`
 - Treasury/endowment wallet ref: `sui:treasury-endowment:mira-chutes-test`
 
-The wallet set enforces exactly the three contribution buckets required by the whitepaper MVP: storage renewal, inference/runtime, and treasury/endowment.
+This test artifact exposes three labeled contribution wallet refs (storage renewal, inference/runtime, treasury/endowment) as receive endpoints. Note that the current whitepaper endowment model is **single-fund**: a character has one balance that pays for everything (spent FIFO), with optional staking and only the unspent fan-credit liability ring-fenced — not separate keep-alive/storage/interaction allocations. Later packages consolidate contributions into that one balance; these older refs are receive labels, not per-purpose budgets.
 
 ## Storage Renewal Smoke
 
