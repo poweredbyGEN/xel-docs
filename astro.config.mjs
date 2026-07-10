@@ -133,6 +133,8 @@ export default defineConfig({
 						{ label: 'FAQ', slug: 'faq' },
 						{ label: 'Whitepaper', slug: 'whitepaper' },
 						{ label: 'How It Works', slug: 'how-it-works' },
+						{ label: 'Persona Settings', slug: 'personas-and-prompts' },
+						{ label: 'Media and Memory Settings', slug: 'memory-and-source-files' },
 						{ label: 'Ownership and the aNFT', slug: 'ownership-and-anft' },
 						{ label: 'Survival Model', slug: 'survival-model' },
 						{ label: 'Endowments and Creator Earnings', slug: 'endowments-and-creator-earnings' },

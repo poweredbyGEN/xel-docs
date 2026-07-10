@@ -1,0 +1,128 @@
+---
+title: "Media and Memory Settings"
+description: "How uploads, links, file scope, privacy, and memory refresh work."
+---
+
+# Media and Memory Settings
+
+The Media tab is where you manage the files and links that help XEL build and
+update a character.
+
+Some files shape the character's persona. Some files become memory. Some files
+do both.
+
+## What Source Files Are
+
+Source files are owner-approved inputs attached to a character. They can come
+from uploads or linked sources.
+
+Examples:
+
+- Images, videos, and audio clips.
+- PDFs, text files, Markdown files, CSV files, and documents.
+- Post descriptions, captions, transcripts, comments, and metadata.
+- Biography notes, interviews, scripts, articles, and reference documents.
+
+## File Scope
+
+Each file has a scope that tells XEL where it can be used:
+
+| Scope | Use |
+|---|---|
+| **Persona** | Shape voice, identity, bio, behavior, and prompt instructions. |
+| **Memory** | Add facts, documents, events, and knowledge for recall. |
+| **Both** | Use the file for both persona building and memory ingestion. |
+
+A file marked **Memory** can help the character answer questions without
+changing the character's personality. A file marked **Persona** can shape the
+character's voice without being treated as a knowledge base. **Both** is for
+material that should do both jobs.
+
+## Privacy
+
+Each file can also have a visibility setting.
+
+| Visibility | Meaning |
+|---|---|
+| **Private** | Keep the file owner-controlled. Use this for sensitive source material. |
+| **Public** | Allow the file to be visible or downloadable where the product exposes it. |
+
+Visibility and scope are different. Visibility controls who can see the file.
+Scope controls how XEL may use the file.
+
+## Uploads and Links
+
+Use uploads when the file is on your computer. Use links when the source lives
+somewhere else and XEL can import it.
+
+Large files may take longer to process. If a file cannot be read, XEL may still
+store it as an asset, but it may not improve persona or memory until the
+content can be extracted.
+
+## Auto-Update Persona from Files
+
+When **Auto-update persona from files** is on, XEL can rebuild the character's
+persona when selected source files change.
+
+This is useful for creators, public figures, and large archives where the
+persona should stay aligned with the latest approved source material.
+
+## Auto-Update Memory from Files
+
+When **Auto-update memory from files** is on, XEL watches selected files and
+linked sources. When they change, XEL can refresh memory so the character can
+recall the updated material.
+
+This is useful for facts, documents, transcripts, posts, and other material the
+character should be able to remember without turning it into personality.
+
+## Files Changed Warnings
+
+XEL may show a warning when files have changed since the last refresh.
+
+- **Files have changed since the last persona refresh** means the persona may
+  not include the latest approved source material yet.
+- **Files have changed since the last memory refresh** means memory may not
+  include the latest approved source material yet.
+
+Use **Update persona** or **Update memory** to recompute from the current files.
+
+## Conversation Memory
+
+Conversation memory is different from source-file memory.
+
+- **Session memory** is the short-term context inside the current chat or voice
+  session.
+- **Conversation history** is the record of prior chats with a user, when the
+  user is identifiable and the character is allowed to use it.
+- **Long-term memory** is the distilled, durable memory that survives sessions
+  and helps the character remember important information later.
+
+For logged-in users, XEL can use the account identity to keep conversation
+context associated with the right person. For anonymous users, XEL may use a
+browser identifier. This helps avoid mixing one visitor's memory with another's.
+
+## What to Put Where
+
+Use **Persona** scope for files that define who the character is:
+
+- Bios and interviews.
+- Voice and style examples.
+- Creator background.
+- Boundaries and character rules.
+
+Use **Memory** scope for files the character should know:
+
+- Documents, PDFs, notes, and spreadsheets.
+- Post descriptions and transcripts.
+- Reference material.
+- Facts the character may need to recall.
+
+Use **Both** when a file does both jobs, such as a long interview that defines
+voice and also contains important facts.
+
+## Deleting Files
+
+Deleting a file removes it from future persona and memory refreshes. If the
+file was already used in a previous refresh, run the relevant update again so
+the character is rebuilt from the remaining files.

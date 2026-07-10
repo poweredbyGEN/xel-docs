@@ -14,6 +14,8 @@ Recommended reading order:
 - FAQ: https://docs.xel.xyz/faq/
 - Whitepaper: https://docs.xel.xyz/whitepaper/
 - How It Works: https://docs.xel.xyz/how-it-works/
+- Persona Settings: https://docs.xel.xyz/personas-and-prompts/
+- Media and Memory Settings: https://docs.xel.xyz/memory-and-source-files/
 - Ownership and the aNFT: https://docs.xel.xyz/ownership-and-anft/
 - Survival Model: https://docs.xel.xyz/survival-model/
 - Endowments and Creator Earnings: https://docs.xel.xyz/endowments-and-creator-earnings/
@@ -43,6 +45,17 @@ XEL is a standard for creating living characters that are truly, permanently you
 ## How It Works
 
 The mechanism in plain language, no code. By the end you know what actually happens when a character exists, remembers, thinks, earns, lasts, and is passed on, and why no company can take it from you.
+
+## Persona Settings
+
+A persona is the character's stable identity. It tells XEL how the character
+speaks, what it knows about itself, what boundaries it follows, and how it
+should answer in chat or voice.
+
+## Media and Memory Settings
+
+The Media tab is where you manage the files and links that help XEL build and
+update a character.
 
 ## Ownership and the aNFT
 

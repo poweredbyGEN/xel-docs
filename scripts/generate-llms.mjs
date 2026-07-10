@@ -9,6 +9,8 @@ const orderedDocs = [
   ['FAQ', 'faq.mdx'],
   ['Whitepaper', 'whitepaper.md'],
   ['How It Works', 'how-it-works.mdx'],
+  ['Persona Settings', 'personas-and-prompts.mdx'],
+  ['Media and Memory Settings', 'memory-and-source-files.mdx'],
   ['Ownership and the aNFT', 'ownership-and-anft.mdx'],
   ['Survival Model', 'survival-model.mdx'],
   ['Endowments and Creator Earnings', 'endowments-and-creator-earnings.mdx'],
