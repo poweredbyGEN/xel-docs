@@ -7,8 +7,8 @@ const destination = 'src/content/docs/whitepaper.md';
 
 const whitepaper = fs.readFileSync(source, 'utf8').trimEnd();
 const frontmatter = `---
-title: Beings That Live Forever
-description: XEL whitepaper for sovereign, persistent digital beings anchored by autonomous NFTs.
+title: Beings that are truly yours
+description: XEL is self-sufficiency of being. Sovereign, persistent AI beings you truly own, self-funded through DAY.
 ---
 
 `;
